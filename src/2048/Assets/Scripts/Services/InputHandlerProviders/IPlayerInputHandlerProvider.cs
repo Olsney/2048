@@ -1,10 +1,10 @@
-using Code.Gameplay.Input;
+using Gameplay.Input;
 
-namespace Code.Services.InputHandlerProviders
+namespace Services.InputHandlerProviders
 {
     public interface IPlayerInputHandlerProvider
     {
-        PlayerInputHandler Get();
-        void Set(PlayerInputHandler playerInputHandler);
+        IPlayerInputEvents Get();
+        void Set(IPlayerInputEvents playerInputEvents);
     }
 }

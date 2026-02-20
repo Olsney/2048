@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace Code.UI.Windows
+namespace UI.Windows
 {
     public class VictoryWindow : WindowBase
     {

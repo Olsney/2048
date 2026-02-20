@@ -1,6 +1,6 @@
 using System;
 
-namespace Code.Data
+namespace Data
 {
     public class WorldData : IWorldData
     {

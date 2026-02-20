@@ -1,8 +1,8 @@
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
-using DG.Tweening;
 
-namespace Code.UI.Elements
+namespace UI.Elements
 {
     public class ScoreView : MonoBehaviour
     {

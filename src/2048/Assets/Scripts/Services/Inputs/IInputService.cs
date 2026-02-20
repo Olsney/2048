@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Code.Services.Inputs
+namespace Services.Inputs
 {
     public interface IInputService
     {

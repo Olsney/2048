@@ -1,6 +1,6 @@
-using Code.Gameplay.Cubes;
+using Gameplay.Cubes;
 
-namespace Code.Services.GameOver
+namespace Services.GameOver
 {
     public interface IGameOverService
     {

@@ -1,10 +1,10 @@
-using Code.Data;
-using Code.Gameplay.Cubes;
-using Code.Services.CubePools;
-using Code.Services.CubeSpawnerProviders;
+using Data;
+using Gameplay.Cubes;
+using Services.CubePools;
+using Services.CubeSpawnerProviders;
 using UnityEngine;
 
-namespace Code.Services.Merge
+namespace Services.Merge
 {
     public class MergeService : IMergeService
     {

@@ -1,9 +1,9 @@
-using Code.Data;
+using Data;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-namespace Code.UI.Windows
+namespace UI.Windows
 {
     public abstract class WindowBase : MonoBehaviour
     {

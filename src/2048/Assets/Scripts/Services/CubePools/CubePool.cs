@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using Code.Gameplay.Cubes;
-using Code.Infrastructure.AssetManagement;
+using Gameplay.Cubes;
+using Infrastructure.AssetManagement;
 using UnityEngine;
 using Zenject;
 
-namespace Code.Services.CubePools
+namespace Services.CubePools
 {
     public class CubePool : ICubePool
     {

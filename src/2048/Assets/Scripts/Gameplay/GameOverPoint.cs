@@ -1,9 +1,9 @@
-using Code.Gameplay.Cubes;
-using Code.Services.GameOver;
+using Gameplay.Cubes;
+using Services.GameOver;
 using UnityEngine;
 using Zenject;
 
-namespace Code.Gameplay
+namespace Gameplay
 {
     public class GameOverPoint : MonoBehaviour
     {

@@ -1,9 +1,9 @@
-using Code.Data;
-using Code.UI.Elements;
+using Data;
+using UI.Elements;
 using UnityEngine;
 using Zenject;
 
-namespace Code.UI
+namespace UI
 {
     public class ActorUI : MonoBehaviour
     {

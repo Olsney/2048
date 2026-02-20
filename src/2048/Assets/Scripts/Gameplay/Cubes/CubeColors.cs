@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Code.Gameplay.Cubes
+namespace Gameplay.Cubes
 {
     public static class CubeColors
     {

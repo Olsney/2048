@@ -1,6 +1,6 @@
-using Code.Infrastructure.States;
+using Infrastructure.States;
 
-namespace Code.Infrastructure.Factory.State
+namespace Infrastructure.Factory.State
 {
     public interface IStateFactory
     {

@@ -1,15 +1,15 @@
-using Code.Gameplay.Input;
+using Gameplay.Input;
 
-namespace Code.Services.InputHandlerProviders
+namespace Services.InputHandlerProviders
 {
     public class PlayerInputHandlerProvider : IPlayerInputHandlerProvider
     {
-        private PlayerInputHandler _playerInputHandler;
+        private IPlayerInputEvents _playerInputEvents;
 
-        public PlayerInputHandler Get() => 
-            _playerInputHandler;
+        public IPlayerInputEvents Get() => 
+            _playerInputEvents;
 
-        public void Set(PlayerInputHandler playerInputHandler) => 
-            _playerInputHandler = playerInputHandler;
+        public void Set(IPlayerInputEvents playerInputEvents) => 
+            _playerInputEvents = playerInputEvents;
     }
 }

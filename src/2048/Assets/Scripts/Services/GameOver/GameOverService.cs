@@ -1,9 +1,8 @@
-using Code.Gameplay.Cubes;
-using Code.UI;
-using Code.UI.Services.Windows;
+using Gameplay.Cubes;
+using UI.Services.Windows;
 using UnityEngine;
 
-namespace Code.Services.GameOver
+namespace Services.GameOver
 {
     public class GameOverService : IGameOverService
     {

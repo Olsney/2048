@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Code.Services.CubePools
+namespace Services.CubePools
 {
     public interface ICubePool
     {

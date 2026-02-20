@@ -1,6 +1,6 @@
-using Code.Gameplay.Cubes;
+using Gameplay.Cubes;
 
-namespace Code.Services.SpawnPointProviders
+namespace Services.SpawnPointProviders
 {
     public interface ICubeSpawnPointProvider
     {

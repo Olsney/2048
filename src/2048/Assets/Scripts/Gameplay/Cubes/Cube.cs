@@ -1,9 +1,9 @@
 using System;
-using Code.Services.Merge;
+using Services.Merge;
 using UnityEngine;
 using Zenject;
 
-namespace Code.Gameplay.Cubes
+namespace Gameplay.Cubes
 {
     public class Cube : MonoBehaviour
     {

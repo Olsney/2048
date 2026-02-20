@@ -1,8 +1,8 @@
-using Code.Infrastructure.AssetManagement;
+using Infrastructure.AssetManagement;
 using UnityEngine;
 using Zenject;
 
-namespace Code.UI.Factory
+namespace UI.Factory
 {
     public class UIFactory : IUIFactory
     {

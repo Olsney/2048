@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Code.Gameplay.Cubes
+namespace Gameplay.Cubes
 {
     public class CubeRotationActivator : MonoBehaviour
     {

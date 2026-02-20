@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using Code.Gameplay.Cubes;
+using Gameplay.Cubes;
 using TMPro;
 using UnityEngine;
 
-namespace Code.UI.Elements
+namespace UI.Elements
 {
     public class CubeValueView : MonoBehaviour
     {

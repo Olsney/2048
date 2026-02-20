@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Code.Services.Inputs
+namespace Services.Inputs
 {
     public class MobileInputService : IInputService
     {
@@ -11,7 +11,9 @@ namespace Code.Services.Inputs
             
             TouchPhase phase = Input.GetTouch(0).phase;
             
-            return phase == TouchPhase.Moved || phase == TouchPhase.Stationary;
+            return phase == TouchPhase.Began ||
+                   phase == TouchPhase.Moved ||
+                   phase == TouchPhase.Stationary;
         }
 
         public bool IsPointerUp()

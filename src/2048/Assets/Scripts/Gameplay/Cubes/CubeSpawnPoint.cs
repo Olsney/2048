@@ -1,8 +1,8 @@
-using Code.Services.SpawnPointProviders;
+using Services.SpawnPointProviders;
 using UnityEngine;
 using Zenject;
 
-namespace Code.Gameplay.Cubes
+namespace Gameplay.Cubes
 {
     public class CubeSpawnPoint : MonoBehaviour
     {

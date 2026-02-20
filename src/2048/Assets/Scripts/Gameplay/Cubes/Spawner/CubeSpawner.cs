@@ -1,19 +1,19 @@
-using System.Collections.Generic;
-using Code.Gameplay.Input;
-using Code.Infrastructure.Factory.Game;
-using Code.Services.InputHandlerProviders;
-using Code.Services.Randoms;
+using System;
+using Gameplay.Input;
+using Infrastructure.Factory.Game;
+using Services.InputHandlerProviders;
+using Services.Randoms;
 using UnityEngine;
 using Zenject;
 
-namespace Code.Gameplay.Cubes.Spawner
+namespace Gameplay.Cubes.Spawner
 {
     public class CubeSpawner : MonoBehaviour
     {
         private const float ForceModifier = 3f;
         private IPlayerInputHandlerProvider _playerInputHandlerProvider;
         private IGameFactory _gameFactory;
-        private PlayerInputHandler _playerInputHandler;
+        private IPlayerInputEvents _playerInput;
         private IRandomService _randomService;
 
         [Inject]
@@ -28,10 +28,27 @@ namespace Code.Gameplay.Cubes.Spawner
 
         public void Initialize()
         {
-            _playerInputHandler = _playerInputHandlerProvider.Get();
-
-            _playerInputHandler.TapEnded += SpawnRandomAtStartPoint;
+            UnsubscribeFromInput();
+            
+            _playerInput = _playerInputHandlerProvider.Get();
+            
+            if (_playerInput == null)
+                throw new InvalidOperationException($"{nameof(IPlayerInputEvents)} is not initialized.");
+            
+            _playerInput.TapEnded += SpawnRandomAtStartPoint;
         }
+
+        private void UnsubscribeFromInput()
+        {
+            if (_playerInput == null)
+                return;
+
+            _playerInput.TapEnded -= SpawnRandomAtStartPoint;
+            _playerInput = null;
+        }
+
+        private void OnDestroy() => 
+            UnsubscribeFromInput();
 
         public GameObject SpawnMerge(int cubeValue, Vector3 at)
         {

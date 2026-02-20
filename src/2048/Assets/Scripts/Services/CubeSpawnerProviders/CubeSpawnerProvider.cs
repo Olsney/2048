@@ -1,6 +1,6 @@
-using Code.Gameplay.Cubes.Spawner;
+using Gameplay.Cubes.Spawner;
 
-namespace Code.Services.CubeSpawnerProviders
+namespace Services.CubeSpawnerProviders
 {
     public class CubeSpawnerProvider : ICubeSpawnerProvider
     {

@@ -1,9 +1,10 @@
-using Code.Gameplay.Input;
-using Code.Services.InputHandlerProviders;
+using System;
+using Gameplay.Input;
+using Services.InputHandlerProviders;
 using UnityEngine;
 using Zenject;
 
-namespace Code.Gameplay.Cubes
+namespace Gameplay.Cubes
 {
     public class CubeMover : MonoBehaviour
     {
@@ -17,16 +18,22 @@ namespace Code.Gameplay.Cubes
         private bool _isDragging;
         private bool _isLaunched;
 
-        private PlayerInputHandler _input;
+        private IPlayerInputHandlerProvider _inputProvider;
+        private IPlayerInputEvents _input;
 
         [Inject]
         public void Construct(IPlayerInputHandlerProvider inputProvider)
         {
-            _input = inputProvider.Get();
+            _inputProvider = inputProvider;
         }
 
         public void Initialize()
         {
+            _input = _inputProvider.Get();
+            
+            if (_input == null)
+                throw new InvalidOperationException($"{nameof(IPlayerInputEvents)} is not initialized.");
+
             _rigidbody = GetComponent<Rigidbody>();
             _rigidbody.isKinematic = true;
             _rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
@@ -42,15 +49,15 @@ namespace Code.Gameplay.Cubes
         
         public void Cleanup()
         {
+            if (_input == null)
+                return;
+
             _input.TapStarted -= OnTapStarted;
             _input.TapEnded -= OnTapEnded;
         }
 
-        public void OnDestroy()
-        {
-            _input.TapStarted -= OnTapStarted;
-            _input.TapEnded -= OnTapEnded;
-        }
+        private void OnDestroy() => 
+            Cleanup();
 
         private void Update()
         {

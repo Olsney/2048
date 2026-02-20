@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
-namespace Code.Infrastructure
+namespace Infrastructure
 {
     public class SwitchToEntrySceneInEditor : MonoBehaviour
     {

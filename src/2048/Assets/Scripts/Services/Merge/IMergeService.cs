@@ -1,6 +1,6 @@
-using Code.Gameplay.Cubes;
+using Gameplay.Cubes;
 
-namespace Code.Services.Merge
+namespace Services.Merge
 {
     public interface IMergeService
     {

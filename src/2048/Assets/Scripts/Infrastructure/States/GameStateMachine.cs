@@ -1,6 +1,6 @@
-using Code.Infrastructure.Factory.State;
+using Infrastructure.Factory.State;
 
-namespace Code.Infrastructure.States
+namespace Infrastructure.States
 {
     public class GameStateMachine
     {

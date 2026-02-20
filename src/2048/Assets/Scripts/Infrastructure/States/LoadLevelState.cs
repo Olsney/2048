@@ -1,7 +1,7 @@
-using Code.Infrastructure.Factory.Game;
-using Code.UI.Factory;
+using Infrastructure.Factory.Game;
+using UI.Factory;
 
-namespace Code.Infrastructure.States
+namespace Infrastructure.States
 {
     public class LoadLevelState : IPayloadedState<string>
     {

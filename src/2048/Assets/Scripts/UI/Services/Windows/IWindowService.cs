@@ -1,4 +1,4 @@
-namespace Code.UI.Services.Windows
+namespace UI.Services.Windows
 {
     public interface IWindowService
     {

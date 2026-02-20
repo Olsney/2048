@@ -1,7 +1,7 @@
 using System;
-using Code.UI.Factory;
+using UI.Factory;
 
-namespace Code.UI.Services.Windows
+namespace UI.Services.Windows
 {
     public class WindowService : IWindowService
     {

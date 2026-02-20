@@ -1,11 +1,11 @@
 using System;
-using Code.Services.Inputs;
+using Services.Inputs;
 using UnityEngine;
 using Zenject;
 
-namespace Code.Gameplay.Input
+namespace Gameplay.Input
 {
-    public class PlayerInputHandler : MonoBehaviour
+    public class PlayerInputHandler : MonoBehaviour, IPlayerInputEvents
     {
         public event Action<Vector2> TapStarted;
         public event Action<Vector2> TapEnded;

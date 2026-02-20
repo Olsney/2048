@@ -1,9 +1,9 @@
-using Code.Infrastructure.Factory.Game;
-using Code.Infrastructure.States;
+using Infrastructure.Factory.Game;
+using Infrastructure.States;
 using UnityEngine;
 using Zenject;
 
-namespace Code.Infrastructure
+namespace Infrastructure
 {
     public class GameBootstrapper : MonoBehaviour, ICoroutineRunner
     {

@@ -1,6 +1,6 @@
 using UnityEngine.SceneManagement;
 
-namespace Code.Infrastructure.States
+namespace Infrastructure.States
 {
     public class BootstrapState : IState
     {

@@ -1,16 +1,16 @@
-using Code.Gameplay.Cubes;
-using Code.Gameplay.Cubes.Spawner;
-using Code.Gameplay.Input;
-using Code.Infrastructure.AssetManagement;
-using Code.Services.CubePools;
-using Code.Services.CubeSpawnerProviders;
-using Code.Services.InputHandlerProviders;
-using Code.Services.Randoms;
-using Code.Services.SpawnPointProviders;
+using Gameplay.Cubes;
+using Gameplay.Cubes.Spawner;
+using Gameplay.Input;
+using Infrastructure.AssetManagement;
+using Services.CubePools;
+using Services.CubeSpawnerProviders;
+using Services.InputHandlerProviders;
+using Services.Randoms;
+using Services.SpawnPointProviders;
 using UnityEngine;
 using Zenject;
 
-namespace Code.Infrastructure.Factory.Game
+namespace Infrastructure.Factory.Game
 {
     public class GameFactory : IGameFactory
     {

@@ -1,23 +1,23 @@
-using Code.Data;
-using Code.Infrastructure.AssetManagement;
-using Code.Infrastructure.Factory.Game;
-using Code.Infrastructure.Factory.State;
-using Code.Infrastructure.States;
-using Code.Services.CubePools;
-using Code.Services.CubeSpawnerProviders;
-using Code.Services.GameOver;
-using Code.Services.InputHandlerProviders;
-using Code.Services.Inputs;
-using Code.Services.Merge;
-using Code.Services.Randoms;
-using Code.Services.SpawnPointProviders;
-using Code.Services.StaticData;
-using Code.UI.Factory;
-using Code.UI.Services.Windows;
+using Data;
+using Infrastructure.AssetManagement;
+using Infrastructure.Factory.Game;
+using Infrastructure.Factory.State;
+using Infrastructure.States;
+using Services.CubePools;
+using Services.CubeSpawnerProviders;
+using Services.GameOver;
+using Services.InputHandlerProviders;
+using Services.Inputs;
+using Services.Merge;
+using Services.Randoms;
+using Services.SpawnPointProviders;
+using Services.StaticData;
+using UI.Factory;
+using UI.Services.Windows;
 using UnityEngine;
 using Zenject;
 
-namespace Code.Infrastructure.Installers
+namespace Infrastructure.Installers
 {
     public class BootstrapInstaller : MonoInstaller, ICoroutineRunner
     {
