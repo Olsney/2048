@@ -1,5 +1,4 @@
 using Data;
-using Infrastructure.AssetManagement;
 using Infrastructure.Factory.Game;
 using Infrastructure.Factory.State;
 using Infrastructure.States;
@@ -53,7 +52,6 @@ namespace Infrastructure.Installers
         {
             BindInputService();
             Container.Bind<IStaticDataService>().To<StaticDataService>().AsSingle();
-            Container.Bind<IAssetProvider>().To<AssetProvider>().AsSingle();
             Container.Bind<IPlayerInputHandlerProvider>().To<PlayerInputHandlerProvider>().AsSingle();
             Container.Bind<ICubeSpawnPointProvider>().To<CubeSpawnPointProvider>().AsSingle();
             Container.Bind<IMergeService>().To<MergeService>().AsSingle();

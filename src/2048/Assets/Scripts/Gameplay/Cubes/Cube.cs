@@ -1,5 +1,7 @@
 using System;
 using Services.Merge;
+using Services.StaticData;
+using Services.StaticData.Configs;
 using UnityEngine;
 using Zenject;
 
@@ -8,8 +10,9 @@ namespace Gameplay.Cubes
     public class Cube : MonoBehaviour
     {
         public event Action ValueUpdated;
-        
-        [SerializeField] private float _minMergeImpulse = 0.1f;
+
+        private bool _isConfigured;
+        private float _minMergeImpulse;
 
         private IMergeService _mergeService;
         private Rigidbody _rigidbody;
@@ -23,13 +26,24 @@ namespace Gameplay.Cubes
         public int Value { get; private set; }
 
         [Inject]
-        public void Construct(IMergeService mergeService)
+        public void Construct(IMergeService mergeService, IStaticDataService staticData)
         {
             _mergeService = mergeService;
+
+            CubeGameplayStaticData config = staticData.CubeConfig;
+
+            if (config == null)
+                throw new InvalidOperationException($"{nameof(CubeGameplayStaticData)} is not initialized.");
+
+            _minMergeImpulse = config.MinMergeImpulse;
+            _isConfigured = true;
         }
 
         public void Initialize(int value)
         {
+            if (_isConfigured == false)
+                throw new InvalidOperationException($"{nameof(CubeGameplayStaticData)} is not configured.");
+
             Value = value;
             
             IsMerging = false;

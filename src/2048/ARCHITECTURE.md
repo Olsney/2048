@@ -40,7 +40,7 @@
 - DI: Zenject.
 - UI: UGUI + TextMeshPro.
 - UI animation: DOTween.
-- Asset loading: `Resources.Load` через `IAssetProvider`.
+- Asset loading: `Resources.Load` через `IStaticDataService` (ScriptableObject-конфиги в `Assets/Resources/StaticData`).
 
 ### Основные директории
 - `Assets/Code/Infrastructure`
@@ -57,18 +57,19 @@
 
 ### 3.1 Boot flow
 1. `GameBootstrapper.Start()` вызывает вход в `BootstrapState` через `GameStateMachine`.
-2. `BootstrapState` проверяет текущую сцену:
+2. `BootstrapState` вызывает `IStaticDataService.LoadAll()`.
+3. `BootstrapState` проверяет текущую сцену:
 - если уже `Initial`, продолжает flow;
 - иначе загружает `Initial` через `SceneLoader`.
-3. `BootstrapState` переводит состояние в `LoadProgressState`.
-4. `LoadProgressState` вызывает переход в `LoadLevelState` с payload `"Main"`.
-5. `LoadLevelState` выполняет загрузку `Empty`, затем `Main`.
-6. После загрузки `Main` выполняется:
+4. `BootstrapState` переводит состояние в `LoadProgressState`.
+5. `LoadProgressState` вызывает переход в `LoadLevelState` с payload `"Main"`.
+6. `LoadLevelState` выполняет загрузку `Empty`, затем `Main`.
+7. После загрузки `Main` выполняется:
 - `UIFactory.CreateUIRoot()`;
 - `UIFactory.CreateHud()`;
 - `GameFactory.CreatePlayerInputHandler()`;
 - `GameFactory.CreateCubeSpawner()`.
-7. Далее state machine входит в `GameLoopState`.
+8. Далее state machine входит в `GameLoopState`.
 
 ### 3.2 Игровой цикл
 1. Игрок взаимодействует с input (`PlayerInputHandler`).
@@ -115,7 +116,7 @@
 - runtime providers (`CubeSpawnerProvider`, `CubeSpawnPointProvider`, `PlayerInputHandlerProvider`);
 - pooling (`CubePool`);
 - random (`RandomService`);
-- static data contract (`StaticDataService`).
+- static data provider (`StaticDataService`) для prefab/runtime-настроек.
 
 ### Data (`Assets/Code/Data`)
 - `WorldData`: runtime state holder для score и событие `Changed`.
@@ -151,8 +152,7 @@
 | `LoadLevelState` | `LoadLevelState` | `AsSingle` | Загрузка сцен и init game world. |
 | `LoadProgressState` | `LoadProgressState` | `AsSingle` | Переход в загрузку `Main`. |
 | `GameLoopState` | `GameLoopState` | `AsSingle` | Рабочий runtime-loop. |
-| `IStaticDataService` | `StaticDataService` | `AsSingle` | Контракт static data (текущая реализация пустая). |
-| `IAssetProvider` | `AssetProvider` | `AsSingle` | Обёртка над `Resources.Load`. |
+| `IStaticDataService` | `StaticDataService` | `AsSingle` | Загрузка static data и prefab-конфигов из `Resources/StaticData`. |
 | `IPlayerInputHandlerProvider` | `PlayerInputHandlerProvider` | `AsSingle` | Хранит ссылку на `PlayerInputHandler`. |
 | `ICubeSpawnPointProvider` | `CubeSpawnPointProvider` | `AsSingle` | Хранит текущий `CubeSpawnPoint`. |
 | `IMergeService` | `MergeService` | `AsSingle` | Логика merge и score reward. |
@@ -211,18 +211,22 @@
 
 ## 7. Asset & Scene Contracts
 
-### 7.1 Контракт ресурсов (`AssetPath`)
-Источник: `Assets/Code/Infrastructure/AssetManagement/AssetPath.cs`.
+### 7.1 Контракт ресурсов (StaticData)
+Источник: `Assets/Resources/StaticData/PrefabsStaticData.asset`.
 
-| Константа | Значение в коде | Фактический asset |
-|---|---|---|
-| `CubePath` | `Cube/Cube` | `Assets/Resources/Cube/Cube.prefab` |
-| `CubeSpawnerPath` | `Cube/CubeSpawner` | `Assets/Resources/Cube/CubeSpawner.prefab` |
-| `PlayerInputHandlerPath` | `Player/PlayerInputHandler` | `Assets/Resources/Player/PlayerInputHandler.prefab` |
-| `UIRoothPath` | `UI/UIRoot` | `Assets/Resources/UI/UIRoot.prefab` |
-| `HudPath` | `UI/Hud` | `Assets/Resources/UI/Hud.prefab` |
-| `VictoryWindowPath` | `UI/VictoryWindow` | `Assets/Resources/UI/VictoryWindow.prefab` |
-| `LoseWindowPath` | `UI/LoseWindow` | `Assets/Resources/UI/LoseWindow.prefab` |
+| `PrefabId` | Фактический asset |
+|---|---|
+| `Cube` | `Assets/Resources/Cube/Cube.prefab` |
+| `CubeSpawner` | `Assets/Resources/Cube/CubeSpawner.prefab` |
+| `PlayerInputHandler` | `Assets/Resources/Player/PlayerInputHandler.prefab` |
+| `UIRoot` | `Assets/Resources/UI/UIRoot.prefab` |
+| `Hud` | `Assets/Resources/UI/Hud.prefab` |
+| `VictoryWindow` | `Assets/Resources/UI/VictoryWindow.prefab` |
+| `LoseWindow` | `Assets/Resources/UI/LoseWindow.prefab` |
+
+Дополнительные runtime-конфиги:
+- `Assets/Resources/StaticData/CubeGameplayStaticData.asset`
+- `Assets/Resources/StaticData/ScoreViewStaticData.asset`
 
 ### 7.2 Контракт сцен
 Сцены в build settings (`ProjectSettings/EditorBuildSettings.asset`):
@@ -240,7 +244,7 @@
 1. Обновить константы/строки в коде.
 2. Обновить build settings.
 3. Проверить загрузку сцен через `SceneLoader`.
-4. Проверить создание prefab через `IAssetProvider`.
+4. Проверить резолв prefab через `IStaticDataService.GetPrefab`.
 5. Прогнать runtime smoke-test.
 
 ---
@@ -270,7 +274,7 @@
 
 ### 9.2 Добавление нового окна UI
 1. Создать prefab окна в `Assets/Resources/UI`.
-2. Добавить константу пути в `AssetPath`.
+2. Добавить запись в `Assets/Resources/StaticData/PrefabsStaticData.asset`.
 3. Добавить метод фабрики в `IUIFactory`/`UIFactory`.
 4. Расширить `WindowType`.
 5. Обновить `WindowService.Open(...)`.
@@ -284,19 +288,18 @@
 
 ### 9.4 Добавление нового ресурса в `Resources`
 1. Разместить prefab/asset в `Assets/Resources/...`.
-2. Добавить `AssetPath`-константу.
-3. Подключить загрузку через `IAssetProvider`.
-4. Проверить отсутствие `null` при `Resources.Load`.
+2. Добавить/обновить запись в `Assets/Resources/StaticData/PrefabsStaticData.asset` или соответствующем static-data asset.
+3. Проверить отсутствие `null` при загрузке через `IStaticDataService`.
 
 ---
 
 ## 10. Known Risks / Tech Debt
 
-### 10.1 Пустая реализация `StaticDataService`
-- Файл: `Assets/Code/Services/StaticData/StaticDataService.cs`.
-- Риск: сервис зарегистрирован в DI, но не несёт функциональной нагрузки.
-- Влияние: затрудняет понимание назначения и расширяемости static data слоя.
-- Рекомендация: либо удалить контракт/биндинг, либо реализовать ответственность (например, таблицы конфигурации значений).
+### 10.1 Неполное покрытие новых данных в static data
+- Файл: `Assets/Resources/StaticData/PrefabsStaticData.asset`.
+- Риск: новый prefab добавлен в `Assets/Resources`, но не добавлен в static-data конфиг.
+- Влияние: `IStaticDataService` выбросит исключение при резолве.
+- Рекомендация: валидировать конфиг при каждом изменении ресурсных prefab.
 
 ### 10.2 Потенциальный конфликт победы/поражения в `GameOverService`
 - Файл: `Assets/Code/Services/GameOver/GameOverService.cs`.
@@ -310,11 +313,13 @@
 - Влияние: возможный runtime exception в edge-сценариях.
 - Рекомендация: заменить логику на явный prefab reference или гарантированный bootstrap entrypoint.
 
-### 10.4 Неоднородность naming (`UIRoothPath`)
-- Файл: `Assets/Code/Infrastructure/AssetManagement/AssetPath.cs`.
-- Риск: опечатка в имени константы усложняет сопровождение.
-- Влияние: повышает вероятность ошибок при рефакторинге.
-- Рекомендация: переименование с безопасной миграцией в отдельной задаче.
+### 10.4 Рассинхронизация значений gameplay/UI и static data
+- Файлы:
+  - `Assets/Resources/StaticData/CubeGameplayStaticData.asset`
+  - `Assets/Resources/StaticData/ScoreViewStaticData.asset`
+- Риск: параметры в конфиге отличаются от ожидаемых продуктовых значений.
+- Влияние: непредсказуемое изменение баланса и ощущения от игры.
+- Рекомендация: фиксировать baseline-значения и проверять их при ревью.
 
 ---
 
@@ -336,7 +341,7 @@
 2. При уничтожении/релизе объектов подписки снимаются.
 
 ### 11.4 Контракты загрузки
-1. Все значения `AssetPath` резолвятся в реальные prefab.
+1. Все записи в `PrefabsStaticData.asset` резолвятся в реальные prefab.
 2. `SceneLoader` проходит ожидаемый boot chain без застреваний.
 
 ---
@@ -386,6 +391,7 @@ sequenceDiagram
     participant GB as GameBootstrapper
     participant GSM as GameStateMachine
     participant BS as BootstrapState
+    participant SD as StaticDataService
     participant SL as SceneLoader
     participant LPS as LoadProgressState
     participant LLS as LoadLevelState
@@ -394,6 +400,7 @@ sequenceDiagram
 
     GB->>GSM: Enter<BootstrapState>()
     GSM->>BS: Enter()
+    BS->>SD: LoadAll()
 
     alt Active scene != Initial
         BS->>SL: Load("Initial")
@@ -509,16 +516,15 @@ flowchart TD
     BI --> S4["GameLoopState"]
 
     BI --> SV1["IStaticDataService -> StaticDataService"]
-    BI --> SV2["IAssetProvider -> AssetProvider"]
-    BI --> SV3["IPlayerInputHandlerProvider -> PlayerInputHandlerProvider"]
-    BI --> SV4["ICubeSpawnPointProvider -> CubeSpawnPointProvider"]
-    BI --> SV5["IMergeService -> MergeService"]
-    BI --> SV6["IRandomService -> RandomService"]
-    BI --> SV7["ICubeSpawnerProvider -> CubeSpawnerProvider"]
-    BI --> SV8["IGameOverService -> GameOverService"]
-    BI --> SV9["IWorldData -> WorldData"]
-    BI --> SV10["IWindowService -> WindowService"]
-    BI --> SV11["ICubePool -> CubePool"]
+    BI --> SV2["IPlayerInputHandlerProvider -> PlayerInputHandlerProvider"]
+    BI --> SV3["ICubeSpawnPointProvider -> CubeSpawnPointProvider"]
+    BI --> SV4["IMergeService -> MergeService"]
+    BI --> SV5["IRandomService -> RandomService"]
+    BI --> SV6["ICubeSpawnerProvider -> CubeSpawnerProvider"]
+    BI --> SV7["IGameOverService -> GameOverService"]
+    BI --> SV8["IWorldData -> WorldData"]
+    BI --> SV9["IWindowService -> WindowService"]
+    BI --> SV10["ICubePool -> CubePool"]
 
     BI --> INP["IInputService -> StandaloneInputService | MobileInputService"]
     BI --> SL["SceneLoader"]
@@ -538,5 +544,5 @@ flowchart TD
 - `Assets/Code/Services/GameOver/GameOverService.cs`
 - `Assets/Code/Data/WorldData.cs`
 - `Assets/Code/UI/Services/Windows/WindowService.cs`
-- `Assets/Code/Infrastructure/AssetManagement/AssetPath.cs`
+- `Assets/Resources/StaticData/PrefabsStaticData.asset`
 - `ProjectSettings/EditorBuildSettings.asset`

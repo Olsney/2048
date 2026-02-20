@@ -1,23 +1,46 @@
+using System;
 using DG.Tweening;
+using Services.StaticData;
+using Services.StaticData.Configs;
 using TMPro;
 using UnityEngine;
+using Zenject;
 
 namespace UI.Elements
 {
     public class ScoreView : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _counter;
-        [SerializeField] private float _punchScale = 1.2f;
-        [SerializeField] private float _scaleDuration = 0.2f;
-        [SerializeField] private float _countDuration = 0.3f;
+
+        private bool _isConfigured;
+        private float _punchScale;
+        private float _scaleDuration;
+        private float _countDuration;
 
         private int _currentValue;
 
         private Tween _countTween;
         private Tween _scaleTween;
 
+        [Inject]
+        public void Construct(IStaticDataService staticData)
+        {
+            ScoreViewStaticData config = staticData.ScoreViewConfig;
+
+            if (config == null)
+                throw new InvalidOperationException($"{nameof(ScoreViewStaticData)} is not initialized.");
+
+            _punchScale = config.PunchScale;
+            _scaleDuration = config.ScaleDuration;
+            _countDuration = config.CountDuration;
+            _isConfigured = true;
+        }
+
         public void SetValue(int newValue)
         {
+            if (_isConfigured == false)
+                throw new InvalidOperationException($"{nameof(ScoreViewStaticData)} is not configured.");
+
             _countTween?.Kill();
             _scaleTween?.Kill();
 

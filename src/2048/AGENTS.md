@@ -26,7 +26,7 @@
 - Сервисы: `Assets/Code/Services`
 - UI: `Assets/Code/UI`
 - Данные мира: `Assets/Code/Data`
-- Ресурсы (prefab/asset через `Resources.Load`): `Assets/Resources`
+- Ресурсы (prefab/asset и static data): `Assets/Resources`
 
 ## Критический runtime-поток
 1. `GameBootstrapper` запускает `GameStateMachine`.
@@ -54,9 +54,10 @@
   1. добавить класс состояния;
   2. зарегистрировать в `BootstrapInstaller.BindStates()`;
   3. убедиться, что переходы в `GameStateMachine` реально достижимы.
-- Для новых prefab/окон через `Resources` обязательно:
-  1. добавить/обновить константу в `Assets/Code/Infrastructure/AssetManagement/AssetPath.cs`;
-  2. проверить фактический путь в `Assets/Resources/**`.
+- Для новых prefab/окон обязательно:
+  1. добавить/обновить запись в `Assets/Resources/StaticData/PrefabsStaticData.asset`;
+  2. проверить фактический prefab в `Assets/Resources/**`;
+  3. убедиться, что `StaticDataService` резолвит prefab без `null`.
 - Не переименовывать сцены `Initial`, `Empty`, `Main` без синхронного обновления:
   - `BootstrapState`, `LoadProgressState`, `LoadLevelState`, `EditorBuildSettings.asset`.
 - Любые подписки на события (`TapStarted`, `TapEnded`, `WorldData.Changed`) должны иметь гарантированную отписку в `Cleanup`/`OnDestroy`.
@@ -75,7 +76,7 @@
 - Merge работает: создаётся новый куб, счёт увеличивается.
 - Окна победы/поражения открываются корректно.
 - Нет утечек подписок на события после уничтожения объектов.
-- Пути `AssetPath` соответствуют реальным prefab в `Assets/Resources`.
+- Конфиг `Assets/Resources/StaticData/PrefabsStaticData.asset` соответствует реальным prefab в `Assets/Resources`.
 
 ## Чего избегать
 - Вносить косметические массовые рефакторы без продуктовой необходимости.
