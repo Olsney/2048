@@ -36,6 +36,7 @@ namespace Gameplay.Cubes.Spawner
                 throw new InvalidOperationException($"{nameof(IPlayerInputEvents)} is not initialized.");
             
             _playerInput.TapEnded += SpawnRandomAtSpawnPoint;
+            SpawnRandomAtSpawnPoint(Vector2.zero);
         }
 
         private void UnsubscribeFromInput()

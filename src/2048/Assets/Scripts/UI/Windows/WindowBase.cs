@@ -10,6 +10,8 @@ namespace UI.Windows
         public event Action Destroyed;
         
         [SerializeField] private Button _closeButton;
+
+        protected Button CloseButton => _closeButton;
        
         protected virtual void Awake()
         {

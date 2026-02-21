@@ -16,12 +16,16 @@ namespace Services.GameOver
 
         public void TryFinish(Cube cube)
         {
+            if (cube == null)
+                return;
+
             if (cube.Value >= VictoryCubeValue)
             {
                 _windowService.Open(WindowType.VictoryWindow);
                 FinishGame();
+                return;
             }
-
+            
             if (cube.HasEnteredPlayArea)
             {
                 _windowService.Open(WindowType.DefeatWindow);
