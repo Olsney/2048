@@ -10,6 +10,7 @@ namespace Gameplay.Cubes
     public class Cube : MonoBehaviour
     {
         public event Action ValueUpdated;
+        public event Action Destroyed;
 
         private bool _isConfigured;
         private float _minMergeImpulse;
@@ -122,5 +123,8 @@ namespace Gameplay.Cubes
 
         public void MarkAsEnteredPlayArea() =>
             HasEnteredPlayArea = true;
+
+        private void OnDestroy() =>
+            Destroyed?.Invoke();
     }
 }

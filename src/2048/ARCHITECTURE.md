@@ -82,7 +82,7 @@
 - увеличивает score через `IWorldData.AddScore(...)`;
 - создаёт merged cube через `CubeSpawnerProvider.Instance.SpawnMerge(...)`;
 - возвращает старые кубы в pool.
-7. UI (`ActorUI`/`ScoreView`) обновляется по событию `WorldData.Changed`.
+7. UI (`ScoreHudPresenter`/`ScoreView`) обновляется по событию `WorldData.Changed`.
 
 ### 3.3 Завершение игры
 1. `Cube` достигает `GameOverPoint`.
@@ -125,7 +125,7 @@
 - Отрисовка и обновление HUD/окон.
 - Открытие окон через `IWindowService`.
 - Создание UI через `IUIFactory`.
-- Реакция на данные через `IWorldData`.
+- Паттерн `MVP Passive View`: `View` отвечает только за отображение, `Presenter` подписывается на `IWorldData` и управляет `View`.
 
 ### Запреты на смешение ответственности
 - UI не должен содержать merge/scoring-логику.
@@ -470,12 +470,12 @@ sequenceDiagram
     participant CSP as CubeSpawnerProvider
     participant CS as CubeSpawner
     participant CP as CubePool
-    participant UI as ActorUI/ScoreView
+    participant UI as ScoreHudPresenter/ScoreView
 
     C1->>MS: Merge(C1, C2)
     MS->>WD: AddScore(reward)
     WD-->>UI: Changed event
-    UI-->>UI: SetValue(Score)
+    UI-->>UI: SetScore(Score)
 
     MS->>CSP: Instance
     CSP-->>MS: CubeSpawner
