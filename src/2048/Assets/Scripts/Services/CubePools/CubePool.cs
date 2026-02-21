@@ -8,6 +8,9 @@ namespace Services.CubePools
 {
     public class CubePool : ICubePool
     {
+        public event System.Action<Cube> CubeAcquired;
+        public event System.Action<Cube> CubeReleased;
+
         private readonly IInstantiator _instantiator;
         private readonly IStaticDataService _staticData;
         private readonly Stack<GameObject> _pool = new();
@@ -30,15 +33,19 @@ namespace Services.CubePools
 
             cube.transform.SetPositionAndRotation(position, rotation);
             cube.SetActive(true);
+
+            Cube cubeComponent = cube.GetComponent<Cube>();
+            CubeAcquired?.Invoke(cubeComponent);
             
             return cube;
         }
 
         public void Release(GameObject cubeObject)
         {
-            cubeObject.SetActive(false);
-
             Cube cube = cubeObject.GetComponent<Cube>();
+            CubeReleased?.Invoke(cube);
+
+            cubeObject.SetActive(false);
             cube.Cleanup();
 
             _pool.Push(cubeObject);

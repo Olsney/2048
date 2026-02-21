@@ -1,26 +1,17 @@
 using System.Collections.Generic;
-using Gameplay.Cubes;
 using TMPro;
 using UnityEngine;
 
 namespace UI.Elements
 {
-    public class CubeValueView : MonoBehaviour
+    public class CubeValueView : MonoBehaviour, ICubeValueView
     {
-        [SerializeField] private Cube _cube;
         [SerializeField] private List<TextMeshPro> _texts = new();
-        
-        private void Awake()
-        {
-            _cube.ValueUpdated += UpdateValue;
-            
-            UpdateValue();
-        }
 
-        private void UpdateValue()
+        public void SetValue(int value)
         {
-            foreach (TextMeshPro text in _texts) 
-                text.SetText(_cube.Value.ToString());
+            foreach (TextMeshPro text in _texts)
+                text.SetText(value.ToString());
         }
     }
 }
