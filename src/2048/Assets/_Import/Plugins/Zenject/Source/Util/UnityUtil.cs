@@ -127,7 +127,8 @@ namespace ModestTree.Util
 
         public static IEnumerable<GameObject> GetAllGameObjects()
         {
-            return GameObject.FindObjectsOfType<Transform>().Select(x => x.gameObject);
+            return UnityEngine.Object.FindObjectsByType<Transform>(FindObjectsSortMode.None)
+                .Select(x => x.gameObject);
         }
 
         public static List<GameObject> GetAllRootGameObjects()
