@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Gameplay.Cubes;
-using Infrastructure.AssetManagement;
+using Services.StaticData;
 using UnityEngine;
 using Zenject;
 
@@ -9,19 +9,21 @@ namespace Services.CubePools
     public class CubePool : ICubePool
     {
         private readonly IInstantiator _instantiator;
-        private readonly IAssetProvider _assets;
+        private readonly IStaticDataService _staticData;
         private readonly Stack<GameObject> _pool = new();
         
         private GameObject _prefab;
 
-        public CubePool(IInstantiator instantiator, IAssetProvider assets)
+        public CubePool(IInstantiator instantiator, IStaticDataService staticData)
         {
             _instantiator = instantiator;
-            _prefab = assets.Load(AssetPath.CubePath);
+            _staticData = staticData;
         }
 
         public GameObject Get(Vector3 position, Quaternion rotation)
         {
+            _prefab ??= _staticData.GetPrefab(PrefabId.Cube);
+
             GameObject cube = _pool.Count > 0
                 ? _pool.Pop()
                 : _instantiator.InstantiatePrefab(_prefab, position, rotation, null);

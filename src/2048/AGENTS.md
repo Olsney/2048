@@ -10,7 +10,7 @@
 - При архитектурных изменениях ориентироваться на `ARCHITECTURE.md` и держать оба документа синхронизированными.
 
 ## Политика путей в документах
-- Использовать только `repo-relative` пути (например: `Assets/Code/Gameplay`, `ProjectSettings/EditorBuildSettings.asset`).
+- Использовать только `repo-relative` пути (например: `Assets/Scripts/Gameplay`, `ProjectSettings/EditorBuildSettings.asset`).
 - Не использовать абсолютные пути в проектной документации.
 
 ## Технологический контекст
@@ -21,12 +21,12 @@
 - Поддерживаемые сцены: `Initial`, `Empty`, `Main` (см. `ProjectSettings/EditorBuildSettings.asset`).
 
 ## Карта проекта
-- Игровая логика: `Assets/Code/Gameplay`
-- Инфраструктура/State machine/загрузка сцен: `Assets/Code/Infrastructure`
-- Сервисы: `Assets/Code/Services`
-- UI: `Assets/Code/UI`
-- Данные мира: `Assets/Code/Data`
-- Ресурсы (prefab/asset через `Resources.Load`): `Assets/Resources`
+- Игровая логика: `Assets/Scripts/Gameplay`
+- Инфраструктура/State machine/загрузка сцен: `Assets/Scripts/Infrastructure`
+- Сервисы: `Assets/Scripts/Services`
+- UI: `Assets/Scripts/UI`
+- Данные мира: `Assets/Scripts/Data`
+- Ресурсы (prefab/asset и static data): `Assets/Resources`
 
 ## Критический runtime-поток
 1. `GameBootstrapper` запускает `GameStateMachine`.
@@ -49,14 +49,17 @@
 - Для новых runtime-сервисов обязательно:
   1. добавить интерфейс;
   2. добавить реализацию;
-  3. зарегистрировать биндинг в `Assets/Code/Infrastructure/Installers/BootstrapInstaller.cs`.
+  3. зарегистрировать биндинг в `Assets/Scripts/Infrastructure/Installers/BootstrapInstaller.cs`.
 - Для новых состояний обязательно:
   1. добавить класс состояния;
   2. зарегистрировать в `BootstrapInstaller.BindStates()`;
   3. убедиться, что переходы в `GameStateMachine` реально достижимы.
-- Для новых prefab/окон через `Resources` обязательно:
-  1. добавить/обновить константу в `Assets/Code/Infrastructure/AssetManagement/AssetPath.cs`;
-  2. проверить фактический путь в `Assets/Resources/**`.
+- Для новых prefab/окон обязательно:
+  1. добавить/обновить запись:
+     - для world/gameplay/ui-root prefab: `Assets/Resources/StaticData/Common/PrefabsStaticData.asset`;
+     - для окон: `Assets/Resources/StaticData/Window/WindowStaticData.asset`;
+  2. проверить фактический prefab в `Assets/Resources/**`;
+  3. убедиться, что `StaticDataService` резолвит prefab без `null`.
 - Не переименовывать сцены `Initial`, `Empty`, `Main` без синхронного обновления:
   - `BootstrapState`, `LoadProgressState`, `LoadLevelState`, `EditorBuildSettings.asset`.
 - Любые подписки на события (`TapStarted`, `TapEnded`, `WorldData.Changed`) должны иметь гарантированную отписку в `Cleanup`/`OnDestroy`.
@@ -75,7 +78,7 @@
 - Merge работает: создаётся новый куб, счёт увеличивается.
 - Окна победы/поражения открываются корректно.
 - Нет утечек подписок на события после уничтожения объектов.
-- Пути `AssetPath` соответствуют реальным prefab в `Assets/Resources`.
+- Конфиги `Assets/Resources/StaticData/Common/PrefabsStaticData.asset` и `Assets/Resources/StaticData/Window/WindowStaticData.asset` соответствуют реальным prefab в `Assets/Resources`.
 
 ## Чего избегать
 - Вносить косметические массовые рефакторы без продуктовой необходимости.

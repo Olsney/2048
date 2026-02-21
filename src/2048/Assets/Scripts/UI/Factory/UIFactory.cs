@@ -1,4 +1,5 @@
-using Infrastructure.AssetManagement;
+using Services.StaticData;
+using UI.Services.Windows;
 using UnityEngine;
 using Zenject;
 
@@ -7,19 +8,19 @@ namespace UI.Factory
     public class UIFactory : IUIFactory
     {
         private readonly IInstantiator _instantiator;
-        private readonly IAssetProvider _assets;
+        private readonly IStaticDataService _staticData;
         
         private GameObject _uiRoot;
 
-        public UIFactory(IInstantiator instantiator, IAssetProvider assets)
+        public UIFactory(IInstantiator instantiator, IStaticDataService staticData)
         {
             _instantiator = instantiator;
-            _assets = assets;
+            _staticData = staticData;
         }
         
         public GameObject CreateUIRoot()
         {
-            GameObject prefab = _assets.Load(AssetPath.UIRoothPath);
+            GameObject prefab = _staticData.GetPrefab(PrefabId.UIRoot);
             _uiRoot = _instantiator.InstantiatePrefab(prefab);
             
             return _uiRoot;
@@ -27,22 +28,22 @@ namespace UI.Factory
 
         public GameObject CreateHud()
         {
-            GameObject prefab = _assets.Load(AssetPath.HudPath);
+            GameObject prefab = _staticData.GetPrefab(PrefabId.Hud);
             
             return _instantiator.InstantiatePrefab(prefab);
         }
 
         public GameObject CreateVictoryWindow()
         {
-            GameObject prefab = _assets.Load(AssetPath.VictoryWindowPath);
+            GameObject prefab = _staticData.GetWindowPrefab(WindowType.VictoryWindow);
             
             return _instantiator.InstantiatePrefab(prefab,_uiRoot.transform);
             
         }
 
-        public GameObject CreateLoseWindow()
+        public GameObject CreateDefeatWindow()
         {
-            GameObject prefab = _assets.Load(AssetPath.LoseWindowPath);
+            GameObject prefab = _staticData.GetWindowPrefab(WindowType.DefeatWindow);
             
             return _instantiator.InstantiatePrefab(prefab, _uiRoot.transform);        
         }

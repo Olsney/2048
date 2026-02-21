@@ -7,6 +7,6 @@ namespace UI.Factory
         GameObject CreateUIRoot();
         GameObject CreateHud();
         GameObject CreateVictoryWindow();
-        GameObject CreateLoseWindow();
+        GameObject CreateDefeatWindow();
     }
 }
