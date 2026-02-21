@@ -9,6 +9,10 @@ namespace Gameplay.Cubes
 {
     public class Cube : MonoBehaviour
     {
+        private const float MergeVfxUpOffset = 0.18f;
+        private const float MergeVfxTowardMidpointOffset = 0.08f;
+        private const float MergeVfxTowardCameraOffset = 0.10f;
+
         public event Action ValueUpdated;
         public event Action Destroyed;
 
@@ -127,10 +131,35 @@ namespace Gameplay.Cubes
 
         private Vector3 GetMergeEffectPosition(Collision collision, Cube otherCube)
         {
-            if (collision.contactCount > 0)
-                return collision.GetContact(0).point;
+            Vector3 midpoint = (transform.position + otherCube.transform.position) / 2f;
+            Vector3 basePosition;
 
-            return (transform.position + otherCube.transform.position) / 2f;
+            if (collision.contactCount > 0)
+            {
+                ContactPoint contact = collision.GetContact(0);
+                Vector3 towardMidpoint = midpoint - contact.point;
+
+                if (towardMidpoint.sqrMagnitude > Mathf.Epsilon)
+                    basePosition = contact.point +
+                        towardMidpoint.normalized * MergeVfxTowardMidpointOffset +
+                        Vector3.up * MergeVfxUpOffset;
+                else
+                    basePosition = contact.point + Vector3.up * MergeVfxUpOffset;
+            }
+            else
+                basePosition = midpoint + Vector3.up * MergeVfxUpOffset;
+
+            Camera mainCamera = Camera.main;
+
+            if (mainCamera == null)
+                return basePosition;
+
+            Vector3 towardCamera = mainCamera.transform.position - basePosition;
+
+            if (towardCamera.sqrMagnitude <= Mathf.Epsilon)
+                return basePosition;
+
+            return basePosition + towardCamera.normalized * MergeVfxTowardCameraOffset;
         }
 
         private void OnDestroy() =>
