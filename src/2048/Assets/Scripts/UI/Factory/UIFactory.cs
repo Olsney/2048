@@ -41,9 +41,9 @@ namespace UI.Factory
             
         }
 
-        public GameObject CreateLoseWindow()
+        public GameObject CreateDefeatWindow()
         {
-            GameObject prefab = _staticData.GetWindowPrefab(WindowType.LoseWindow);
+            GameObject prefab = _staticData.GetWindowPrefab(WindowType.DefeatWindow);
             
             return _instantiator.InstantiatePrefab(prefab, _uiRoot.transform);        
         }

@@ -10,7 +10,7 @@
 - При архитектурных изменениях ориентироваться на `ARCHITECTURE.md` и держать оба документа синхронизированными.
 
 ## Политика путей в документах
-- Использовать только `repo-relative` пути (например: `Assets/Code/Gameplay`, `ProjectSettings/EditorBuildSettings.asset`).
+- Использовать только `repo-relative` пути (например: `Assets/Scripts/Gameplay`, `ProjectSettings/EditorBuildSettings.asset`).
 - Не использовать абсолютные пути в проектной документации.
 
 ## Технологический контекст
@@ -21,11 +21,11 @@
 - Поддерживаемые сцены: `Initial`, `Empty`, `Main` (см. `ProjectSettings/EditorBuildSettings.asset`).
 
 ## Карта проекта
-- Игровая логика: `Assets/Code/Gameplay`
-- Инфраструктура/State machine/загрузка сцен: `Assets/Code/Infrastructure`
-- Сервисы: `Assets/Code/Services`
-- UI: `Assets/Code/UI`
-- Данные мира: `Assets/Code/Data`
+- Игровая логика: `Assets/Scripts/Gameplay`
+- Инфраструктура/State machine/загрузка сцен: `Assets/Scripts/Infrastructure`
+- Сервисы: `Assets/Scripts/Services`
+- UI: `Assets/Scripts/UI`
+- Данные мира: `Assets/Scripts/Data`
 - Ресурсы (prefab/asset и static data): `Assets/Resources`
 
 ## Критический runtime-поток
@@ -49,7 +49,7 @@
 - Для новых runtime-сервисов обязательно:
   1. добавить интерфейс;
   2. добавить реализацию;
-  3. зарегистрировать биндинг в `Assets/Code/Infrastructure/Installers/BootstrapInstaller.cs`.
+  3. зарегистрировать биндинг в `Assets/Scripts/Infrastructure/Installers/BootstrapInstaller.cs`.
 - Для новых состояний обязательно:
   1. добавить класс состояния;
   2. зарегистрировать в `BootstrapInstaller.BindStates()`;

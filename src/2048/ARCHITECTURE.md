@@ -43,11 +43,11 @@
 - Asset loading: `Resources.Load` через `IStaticDataService` (ScriptableObject-конфиги в `Assets/Resources/StaticData`).
 
 ### Основные директории
-- `Assets/Code/Infrastructure`
-- `Assets/Code/Gameplay`
-- `Assets/Code/Services`
-- `Assets/Code/UI`
-- `Assets/Code/Data`
+- `Assets/Scripts/Infrastructure`
+- `Assets/Scripts/Gameplay`
+- `Assets/Scripts/Services`
+- `Assets/Scripts/UI`
+- `Assets/Scripts/Data`
 - `Assets/Resources`
 - `ProjectSettings`
 
@@ -94,21 +94,21 @@
 
 ## 4. Модульная декомпозиция и ответственность
 
-### Infrastructure (`Assets/Code/Infrastructure`)
+### Infrastructure (`Assets/Scripts/Infrastructure`)
 Отвечает за оркестрацию приложения:
 - state machine (`GameStateMachine`, состояния);
 - загрузку сцен (`SceneLoader`);
 - DI-композицию (`BootstrapInstaller`);
 - фабрики уровня приложения (`GameFactory`, `StateFactory`, `UIFactory`).
 
-### Gameplay (`Assets/Code/Gameplay`)
+### Gameplay (`Assets/Scripts/Gameplay`)
 Отвечает за игровое поведение объектов:
 - `Cube`, `CubeMover`, `CubeSpawnPoint`, `CubeRotationActivator`;
 - `CubeSpawner`;
 - `PlayerInputHandler`;
 - `GameOverPoint`.
 
-### Services (`Assets/Code/Services`)
+### Services (`Assets/Scripts/Services`)
 Отвечают за доменные операции и инфраструктурные runtime-сервисы:
 - merge (`MergeService`);
 - game over (`GameOverService`);
@@ -118,10 +118,10 @@
 - random (`RandomService`);
 - static data provider (`StaticDataService`) для prefab/runtime-настроек.
 
-### Data (`Assets/Code/Data`)
+### Data (`Assets/Scripts/Data`)
 - `WorldData`: runtime state holder для score и событие `Changed`.
 
-### UI (`Assets/Code/UI`)
+### UI (`Assets/Scripts/UI`)
 - Отрисовка и обновление HUD/окон.
 - Открытие окон через `IWindowService`.
 - Создание UI через `IUIFactory`.
@@ -138,7 +138,7 @@
 ## 5. Dependency Injection Map (Zenject)
 
 ### 5.1 Источник правды
-Все ключевые runtime-binds определяются в `Assets/Code/Infrastructure/Installers/BootstrapInstaller.cs`.
+Все ключевые runtime-binds определяются в `Assets/Scripts/Infrastructure/Installers/BootstrapInstaller.cs`.
 
 ### 5.2 Карта биндингов
 | Контракт/тип | Реализация | Lifetime | Назначение |
@@ -227,7 +227,7 @@
 | `WindowType` | Фактический asset |
 |---|---|
 | `VictoryWindow` | `Assets/Resources/UI/VictoryWindow.prefab` |
-| `LoseWindow` | `Assets/Resources/UI/LoseWindow.prefab` |
+| `DefeatWindow` | `Assets/Resources/UI/LoseWindow.prefab` |
 
 Дополнительные runtime-конфиги:
 - `Assets/Resources/StaticData/Gameplay/CubeGameplayStaticData.asset`
@@ -271,8 +271,8 @@
 ## 9. Расширение системы (playbook)
 
 ### 9.1 Добавление gameplay-сервиса
-1. Создать интерфейс в `Assets/Code/Services/<Domain>/I*.cs`.
-2. Создать реализацию в `Assets/Code/Services/<Domain>/*.cs`.
+1. Создать интерфейс в `Assets/Scripts/Services/<Domain>/I*.cs`.
+2. Создать реализацию в `Assets/Scripts/Services/<Domain>/*.cs`.
 3. Добавить bind в `BootstrapInstaller.BindServices()`.
 4. Внедрить зависимость в потребителей через DI.
 5. Добавить пункт проверки в `Verification Checklist`.
@@ -286,7 +286,7 @@
 6. Проверить открытие окна в runtime.
 
 ### 9.3 Добавление нового state
-1. Реализовать `IState` или `IPayloadedState<T>` в `Assets/Code/Infrastructure/States`.
+1. Реализовать `IState` или `IPayloadedState<T>` в `Assets/Scripts/Infrastructure/States`.
 2. Зарегистрировать bind в `BindStates()`.
 3. Добавить переходы в `GameStateMachine`-flow.
 4. Проверить exit/enter semantics текущего активного состояния.
@@ -311,13 +311,13 @@
 - Рекомендация: валидировать конфиг при каждом изменении ресурсных prefab.
 
 ### 10.2 Потенциальный конфликт победы/поражения в `GameOverService`
-- Файл: `Assets/Code/Services/GameOver/GameOverService.cs`.
-- Риск: два последовательных `if` могут открыть `VictoryWindow`, затем `LoseWindow` в одном вызове `TryFinish(...)`.
+- Файл: `Assets/Scripts/Services/GameOver/GameOverService.cs`.
+- Риск: два последовательных `if` могут открыть `VictoryWindow`, затем `DefeatWindow` в одном вызове `TryFinish(...)`.
 - Влияние: неконсистентный UI финала.
 - Рекомендация: перейти на взаимоисключающую логику (`if/else if`) с явным приоритетом финального состояния.
 
 ### 10.3 Уязвимость к `null` в `GameRunner`
-- Файл: `Assets/Code/Infrastructure/GameRunner.cs`.
+- Файл: `Assets/Scripts/Infrastructure/GameRunner.cs`.
 - Риск: инжектируемый `GameBootstrapper` при `null` передаётся в `Instantiate(bootstrapper)`.
 - Влияние: возможный runtime exception в edge-сценариях.
 - Рекомендация: заменить логику на явный prefab reference или гарантированный bootstrap entrypoint.
@@ -342,7 +342,7 @@
 1. Spawn: куб появляется по пользовательскому input.
 2. Merge: одинаковые значения корректно объединяются.
 3. Score: счёт увеличивается и обновляет `ScoreView`.
-4. Lose: открывается `LoseWindow`, игра на паузе.
+4. Defeat: открывается `DefeatWindow`, игра на паузе.
 5. Victory: открывается `VictoryWindow`, игра на паузе.
 
 ### 11.3 События и lifecycle
@@ -449,7 +449,7 @@ sequenceDiagram
 
     P->>PIH: Pointer/tap interaction
     PIH-->>CS: TapEnded(position)
-    CS->>RS: GetRandomPo2Value()
+    CS->>RS: GetRandomPowerOfTwoValue()
     RS-->>CS: 2 or 4
     CS->>GF: CreateCube(value)
     GF->>CP: Get(position, rotation)
@@ -457,7 +457,7 @@ sequenceDiagram
     GF->>CM: Initialize()
     GF->>C: Initialize(value)
     GF-->>CS: cube instance
-    Note over CS,C: Ветвь SpawnMerge дополнительно вызывает MarkAsInGame()
+    Note over CS,C: Ветвь SpawnMerge дополнительно вызывает MarkAsEnteredPlayArea()
 ```
 
 ### D. Sequence Diagram: Merge to Score/UI
@@ -497,14 +497,14 @@ sequenceDiagram
     C->>GOP: OnTriggerEnter()
     GOP->>GOS: TryFinish(cube)
 
-    alt cube.Value >= MaxCubeValue
+    alt cube.Value >= VictoryCubeValue
         GOS->>WS: Open(VictoryWindow)
         WS->>UIF: CreateVictoryWindow()
     end
 
-    alt cube.IsInGame
-        GOS->>WS: Open(LoseWindow)
-        WS->>UIF: CreateLoseWindow()
+    alt cube.HasEnteredPlayArea
+        GOS->>WS: Open(DefeatWindow)
+        WS->>UIF: CreateDefeatWindow()
     end
 
     GOS-->>GOS: Time.timeScale = 0
@@ -542,17 +542,17 @@ flowchart TD
 ---
 
 ## Приложение: Быстрый навигатор по ключевым файлам
-- `Assets/Code/Infrastructure/Installers/BootstrapInstaller.cs`
-- `Assets/Code/Infrastructure/States/BootstrapState.cs`
-- `Assets/Code/Infrastructure/States/LoadProgressState.cs`
-- `Assets/Code/Infrastructure/States/LoadLevelState.cs`
-- `Assets/Code/Infrastructure/Factory/Game/GameFactory.cs`
-- `Assets/Code/Gameplay/Cubes/Spawner/CubeSpawner.cs`
-- `Assets/Code/Gameplay/Cubes/Cube.cs`
-- `Assets/Code/Services/Merge/MergeService.cs`
-- `Assets/Code/Services/GameOver/GameOverService.cs`
-- `Assets/Code/Data/WorldData.cs`
-- `Assets/Code/UI/Services/Windows/WindowService.cs`
+- `Assets/Scripts/Infrastructure/Installers/BootstrapInstaller.cs`
+- `Assets/Scripts/Infrastructure/States/BootstrapState.cs`
+- `Assets/Scripts/Infrastructure/States/LoadProgressState.cs`
+- `Assets/Scripts/Infrastructure/States/LoadLevelState.cs`
+- `Assets/Scripts/Infrastructure/Factory/Game/GameFactory.cs`
+- `Assets/Scripts/Gameplay/Cubes/Spawner/CubeSpawner.cs`
+- `Assets/Scripts/Gameplay/Cubes/Cube.cs`
+- `Assets/Scripts/Services/Merge/MergeService.cs`
+- `Assets/Scripts/Services/GameOver/GameOverService.cs`
+- `Assets/Scripts/Data/WorldData.cs`
+- `Assets/Scripts/UI/Services/Windows/WindowService.cs`
 - `Assets/Resources/StaticData/Common/PrefabsStaticData.asset`
 - `Assets/Resources/StaticData/Window/WindowStaticData.asset`
 - `ProjectSettings/EditorBuildSettings.asset`

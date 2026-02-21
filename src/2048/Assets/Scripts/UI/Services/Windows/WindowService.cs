@@ -21,8 +21,8 @@ namespace UI.Services.Windows
                 case WindowType.VictoryWindow:
                     _uiFactory.CreateVictoryWindow();
                     break;
-                case WindowType.LoseWindow:
-                    _uiFactory.CreateLoseWindow();
+                case WindowType.DefeatWindow:
+                    _uiFactory.CreateDefeatWindow();
                     break;
                 
                 default:

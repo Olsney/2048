@@ -26,22 +26,22 @@ Physics-based версия 2048 на Unity. Проект построен на `
 
 ## Где код
 ### Карта проекта
-- `Assets/Code/Infrastructure` — boot, state machine, DI, scene loading, фабрики.
-- `Assets/Code/Gameplay` — кубы, input handler, spawner, game over point.
-- `Assets/Code/Services` — merge/game over/random/pool/providers.
-- `Assets/Code/UI` — HUD, окна, window service/factory.
-- `Assets/Code/Data` — `WorldData`, счёт и события.
+- `Assets/Scripts/Infrastructure` — boot, state machine, DI, scene loading, фабрики.
+- `Assets/Scripts/Gameplay` — кубы, input handler, spawner, game over point.
+- `Assets/Scripts/Services` — merge/game over/random/pool/providers.
+- `Assets/Scripts/UI` — HUD, окна, window service/factory.
+- `Assets/Scripts/Data` — `WorldData`, счёт и события.
 - `Assets/Resources` — runtime prefab/assets (`Resources.Load`).
 - `ProjectSettings` — конфигурация Unity, включая build scenes.
 
 ### С чего читать код
-- `Assets/Code/Infrastructure/Installers/BootstrapInstaller.cs`
-- `Assets/Code/Infrastructure/States/BootstrapState.cs`
-- `Assets/Code/Infrastructure/States/LoadLevelState.cs`
-- `Assets/Code/Infrastructure/Factory/Game/GameFactory.cs`
-- `Assets/Code/Services/Merge/MergeService.cs`
-- `Assets/Code/Services/GameOver/GameOverService.cs`
-- `Assets/Code/UI/Services/Windows/WindowService.cs`
+- `Assets/Scripts/Infrastructure/Installers/BootstrapInstaller.cs`
+- `Assets/Scripts/Infrastructure/States/BootstrapState.cs`
+- `Assets/Scripts/Infrastructure/States/LoadLevelState.cs`
+- `Assets/Scripts/Infrastructure/Factory/Game/GameFactory.cs`
+- `Assets/Scripts/Services/Merge/MergeService.cs`
+- `Assets/Scripts/Services/GameOver/GameOverService.cs`
+- `Assets/Scripts/UI/Services/Windows/WindowService.cs`
 
 ## Документация
 - [AGENTS.md](AGENTS.md) — правила внесения изменений и рабочие ограничения.

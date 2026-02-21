@@ -111,13 +111,13 @@ namespace Gameplay.Cubes
         {
             Vector3 cameraPosition = _mainCamera.ScreenToWorldPoint(new Vector3(
                 screenPosition.x, screenPosition.y, _distanceFromCamera));
-            Vector3 cubePermissiblePosition = transform.position;
-            cubePermissiblePosition.z = Mathf.Clamp(
+            Vector3 clampedPosition = transform.position;
+            clampedPosition.z = Mathf.Clamp(
                 cameraPosition.z, 
                 _leftLimitZ, 
                 _rightLimitZ);
             
-            transform.position = cubePermissiblePosition;
+            transform.position = clampedPosition;
         }
 
         private void OnTriggerEnter(Collider other)

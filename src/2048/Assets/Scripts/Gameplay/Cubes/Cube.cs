@@ -20,8 +20,8 @@ namespace Gameplay.Cubes
 
 
         public bool IsMerging { get; private set; }
-        public bool IsInGame { get; private set; }
-        public bool ReachedGameOverPoint { get; private set; }
+        public bool HasEnteredPlayArea { get; private set; }
+        public bool HasTriggeredGameOver { get; private set; }
         
         public int Value { get; private set; }
 
@@ -47,8 +47,8 @@ namespace Gameplay.Cubes
             Value = value;
             
             IsMerging = false;
-            IsInGame = false;
-            ReachedGameOverPoint = false;
+            HasEnteredPlayArea = false;
+            HasTriggeredGameOver = false;
 
             _rigidbody = GetComponent<Rigidbody>();
             
@@ -65,8 +65,11 @@ namespace Gameplay.Cubes
             if (IsMerging)
                 IsMerging = false;
             
-            if(IsInGame)
-                IsInGame = false;
+            if (HasEnteredPlayArea)
+                HasEnteredPlayArea = false;
+
+            if (HasTriggeredGameOver)
+                HasTriggeredGameOver = false;
         }
 
         private void OnCollisionEnter(Collision collision)
@@ -99,16 +102,16 @@ namespace Gameplay.Cubes
             if (other.TryGetComponent(out GameOverPoint losePoint) == false)
                 return;
 
-            if (IsInGame == false)
+            if (HasEnteredPlayArea == false)
             {
-                IsInGame = true;
+                HasEnteredPlayArea = true;
                 
                 return;
             }
 
-            if (IsInGame)
+            if (HasEnteredPlayArea)
             {
-                ReachedGameOverPoint = true;
+                HasTriggeredGameOver = true;
                 
                 losePoint.Finish(cube: this);
             }
@@ -117,7 +120,7 @@ namespace Gameplay.Cubes
         public void MarkAsMerging() => 
             IsMerging = true;
 
-        public void MarkAsInGame() =>
-            IsInGame = true;
+        public void MarkAsEnteredPlayArea() =>
+            HasEnteredPlayArea = true;
     }
 }
