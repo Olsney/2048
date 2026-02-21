@@ -11,18 +11,21 @@ namespace Services.Merge
         private readonly ICubeSpawnerProvider _spawnerProvider;
         private readonly IWorldData _worldData;
         private readonly ICubePool _cubePool;
+        private readonly IMergeVfxService _mergeVfxService;
 
 
         public MergeService(ICubeSpawnerProvider spawnerProvider,
             IWorldData worldData,
-            ICubePool cubePool)
+            ICubePool cubePool,
+            IMergeVfxService mergeVfxService)
         {
             _spawnerProvider = spawnerProvider;
             _worldData = worldData;
             _cubePool = cubePool;
+            _mergeVfxService = mergeVfxService;
         }
 
-        public void Merge(Cube first, Cube second)
+        public void Merge(Cube first, Cube second, Vector3 mergeEffectPosition)
         {
             if (first == null || second == null)
                 return;
@@ -36,6 +39,7 @@ namespace Services.Merge
             _worldData.AddScore(scoreReward);
 
             Vector3 spawnPosition = GetSpawnPosition(first, second);
+            _mergeVfxService.PlayAt(mergeEffectPosition);
             _spawnerProvider.Instance.SpawnMerge(newCubeValue, spawnPosition);
 
             ReleaseCube(first);

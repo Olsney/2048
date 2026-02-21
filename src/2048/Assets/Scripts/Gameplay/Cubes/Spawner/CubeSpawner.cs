@@ -35,7 +35,8 @@ namespace Gameplay.Cubes.Spawner
             if (_playerInput == null)
                 throw new InvalidOperationException($"{nameof(IPlayerInputEvents)} is not initialized.");
             
-            _playerInput.TapEnded += SpawnRandomAtStartPoint;
+            _playerInput.TapEnded += SpawnRandomAtSpawnPoint;
+            SpawnRandomAtSpawnPoint(Vector2.zero);
         }
 
         private void UnsubscribeFromInput()
@@ -43,7 +44,7 @@ namespace Gameplay.Cubes.Spawner
             if (_playerInput == null)
                 return;
 
-            _playerInput.TapEnded -= SpawnRandomAtStartPoint;
+            _playerInput.TapEnded -= SpawnRandomAtSpawnPoint;
             _playerInput = null;
         }
 
@@ -56,7 +57,7 @@ namespace Gameplay.Cubes.Spawner
             SetColor(mergedCube, cubeValue);
 
             Cube cube = mergedCube.GetComponent<Cube>();
-            cube.MarkAsInGame();
+            cube.MarkAsEnteredPlayArea();
 
             Rigidbody rigidbody = mergedCube.GetComponent<Rigidbody>();
             AddRandomForceToNewCube(rigidbody);
@@ -64,9 +65,9 @@ namespace Gameplay.Cubes.Spawner
             return mergedCube;
         }
 
-        private void SpawnRandomAtStartPoint(Vector2 position)
+        private void SpawnRandomAtSpawnPoint(Vector2 _)
         {
-            int cubeValue = _randomService.GetRandomPo2Value();
+            int cubeValue = _randomService.GetRandomPowerOfTwoValue();
 
             GameObject cube = _gameFactory.CreateCube(cubeValue);
 

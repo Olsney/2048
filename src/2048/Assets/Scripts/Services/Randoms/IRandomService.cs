@@ -2,7 +2,7 @@ namespace Services.Randoms
 {
     public interface IRandomService
     {
-        int GetRandomPo2Value();
+        int GetRandomPowerOfTwoValue();
         float Next(float min, float max);
     }
 }

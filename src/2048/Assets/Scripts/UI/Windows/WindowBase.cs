@@ -1,47 +1,36 @@
-using Data;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
-using Zenject;
 
 namespace UI.Windows
 {
     public abstract class WindowBase : MonoBehaviour
     {
-        protected IWorldData WorldData;
-
-        [SerializeField] private Button _closeButton;
-        protected int Score => WorldData.Score;
+        public event Action CloseRequested;
+        public event Action Destroyed;
         
-        [Inject]
-        public void Construct(IWorldData worldData)
-        {
-            WorldData = worldData;
-        }
+        [SerializeField] private Button _closeButton;
 
-        private void Awake() => 
-            OnAwake();
-
-        private void Start()
-        {
-            Initialize();
-            SubscribeUpdates();
-        }
-
-        private void OnDestroy()
-        {
-            Cleanup();
-        }
-
-        protected virtual void OnAwake()
+        protected Button CloseButton => _closeButton;
+       
+        protected virtual void Awake()
         {
             if (_closeButton != null)
-                _closeButton.onClick.AddListener(() => Destroy(gameObject));
+                _closeButton.onClick.AddListener(HandleCloseClicked);
         }
         
-        protected virtual void Initialize() { }
+        protected virtual void OnDestroy()
+        {
+            if (_closeButton != null)
+                _closeButton.onClick.RemoveListener(HandleCloseClicked);
 
-        protected virtual void SubscribeUpdates() { }
+            Destroyed?.Invoke();
+        }
 
-        protected virtual void Cleanup() { }
+        private void HandleCloseClicked() => 
+            CloseRequested?.Invoke();
+
+        public void Close() =>
+            Destroy(gameObject);
     }
 }

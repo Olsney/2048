@@ -7,7 +7,7 @@ namespace Services.GameOver
     public class GameOverService : IGameOverService
     {
         private readonly IWindowService _windowService;
-        private const int MaxCubeValue = 131072;
+        private const int VictoryCubeValue = 131072;
 
         public GameOverService(IWindowService windowService)
         {
@@ -16,15 +16,19 @@ namespace Services.GameOver
 
         public void TryFinish(Cube cube)
         {
-            if (cube.Value >= MaxCubeValue)
+            if (cube == null)
+                return;
+
+            if (cube.Value >= VictoryCubeValue)
             {
                 _windowService.Open(WindowType.VictoryWindow);
                 FinishGame();
+                return;
             }
-
-            if (cube.IsInGame)
+            
+            if (cube.HasEnteredPlayArea)
             {
-                _windowService.Open(WindowType.LoseWindow);
+                _windowService.Open(WindowType.DefeatWindow);
                 FinishGame();
             }
         }

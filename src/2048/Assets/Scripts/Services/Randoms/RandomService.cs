@@ -2,7 +2,7 @@ namespace Services.Randoms
 {
     public class RandomService : IRandomService
     {
-        public int GetRandomPo2Value() =>
+        public int GetRandomPowerOfTwoValue() =>
             UnityEngine.Random.value < 0.75 
                 ? 2 
                 : 4;

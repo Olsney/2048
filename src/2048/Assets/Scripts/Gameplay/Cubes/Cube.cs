@@ -1,5 +1,7 @@
 using System;
 using Services.Merge;
+using Services.StaticData;
+using Services.StaticData.Configs;
 using UnityEngine;
 using Zenject;
 
@@ -7,9 +9,15 @@ namespace Gameplay.Cubes
 {
     public class Cube : MonoBehaviour
     {
+        private const float MergeVfxUpOffset = 0.18f;
+        private const float MergeVfxTowardMidpointOffset = 0.08f;
+        private const float MergeVfxTowardCameraOffset = 0.10f;
+
         public event Action ValueUpdated;
-        
-        [SerializeField] private float _minMergeImpulse = 0.1f;
+        public event Action Destroyed;
+
+        private bool _isConfigured;
+        private float _minMergeImpulse;
 
         private IMergeService _mergeService;
         private Rigidbody _rigidbody;
@@ -17,24 +25,35 @@ namespace Gameplay.Cubes
 
 
         public bool IsMerging { get; private set; }
-        public bool IsInGame { get; private set; }
-        public bool ReachedGameOverPoint { get; private set; }
+        public bool HasEnteredPlayArea { get; private set; }
+        public bool HasTriggeredGameOver { get; private set; }
         
         public int Value { get; private set; }
 
         [Inject]
-        public void Construct(IMergeService mergeService)
+        public void Construct(IMergeService mergeService, IStaticDataService staticData)
         {
             _mergeService = mergeService;
+
+            CubeGameplayStaticData config = staticData.CubeConfig;
+
+            if (config == null)
+                throw new InvalidOperationException($"{nameof(CubeGameplayStaticData)} is not initialized.");
+
+            _minMergeImpulse = config.MinMergeImpulse;
+            _isConfigured = true;
         }
 
         public void Initialize(int value)
         {
+            if (_isConfigured == false)
+                throw new InvalidOperationException($"{nameof(CubeGameplayStaticData)} is not configured.");
+
             Value = value;
             
             IsMerging = false;
-            IsInGame = false;
-            ReachedGameOverPoint = false;
+            HasEnteredPlayArea = false;
+            HasTriggeredGameOver = false;
 
             _rigidbody = GetComponent<Rigidbody>();
             
@@ -51,8 +70,11 @@ namespace Gameplay.Cubes
             if (IsMerging)
                 IsMerging = false;
             
-            if(IsInGame)
-                IsInGame = false;
+            if (HasEnteredPlayArea)
+                HasEnteredPlayArea = false;
+
+            if (HasTriggeredGameOver)
+                HasTriggeredGameOver = false;
         }
 
         private void OnCollisionEnter(Collision collision)
@@ -76,8 +98,9 @@ namespace Gameplay.Cubes
                 return;
             
             IsMerging = true;
-            
-            _mergeService.Merge(this, cube);
+
+            Vector3 mergeEffectPosition = GetMergeEffectPosition(collision, cube);
+            _mergeService.Merge(this, cube, mergeEffectPosition);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -85,16 +108,16 @@ namespace Gameplay.Cubes
             if (other.TryGetComponent(out GameOverPoint losePoint) == false)
                 return;
 
-            if (IsInGame == false)
+            if (HasEnteredPlayArea == false)
             {
-                IsInGame = true;
+                HasEnteredPlayArea = true;
                 
                 return;
             }
 
-            if (IsInGame)
+            if (HasEnteredPlayArea)
             {
-                ReachedGameOverPoint = true;
+                HasTriggeredGameOver = true;
                 
                 losePoint.Finish(cube: this);
             }
@@ -103,7 +126,43 @@ namespace Gameplay.Cubes
         public void MarkAsMerging() => 
             IsMerging = true;
 
-        public void MarkAsInGame() =>
-            IsInGame = true;
+        public void MarkAsEnteredPlayArea() =>
+            HasEnteredPlayArea = true;
+
+        private Vector3 GetMergeEffectPosition(Collision collision, Cube otherCube)
+        {
+            Vector3 midpoint = (transform.position + otherCube.transform.position) / 2f;
+            Vector3 basePosition;
+
+            if (collision.contactCount > 0)
+            {
+                ContactPoint contact = collision.GetContact(0);
+                Vector3 towardMidpoint = midpoint - contact.point;
+
+                if (towardMidpoint.sqrMagnitude > Mathf.Epsilon)
+                    basePosition = contact.point +
+                        towardMidpoint.normalized * MergeVfxTowardMidpointOffset +
+                        Vector3.up * MergeVfxUpOffset;
+                else
+                    basePosition = contact.point + Vector3.up * MergeVfxUpOffset;
+            }
+            else
+                basePosition = midpoint + Vector3.up * MergeVfxUpOffset;
+
+            Camera mainCamera = Camera.main;
+
+            if (mainCamera == null)
+                return basePosition;
+
+            Vector3 towardCamera = mainCamera.transform.position - basePosition;
+
+            if (towardCamera.sqrMagnitude <= Mathf.Epsilon)
+                return basePosition;
+
+            return basePosition + towardCamera.normalized * MergeVfxTowardCameraOffset;
+        }
+
+        private void OnDestroy() =>
+            Destroyed?.Invoke();
     }
 }

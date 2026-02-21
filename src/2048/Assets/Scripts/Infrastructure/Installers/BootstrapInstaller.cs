@@ -1,19 +1,22 @@
 using Data;
-using Infrastructure.AssetManagement;
 using Infrastructure.Factory.Game;
 using Infrastructure.Factory.State;
 using Infrastructure.States;
 using Services.CubePools;
 using Services.CubeSpawnerProviders;
 using Services.GameOver;
+using Services.GameRestart;
 using Services.InputHandlerProviders;
 using Services.Inputs;
 using Services.Merge;
 using Services.Randoms;
+using Services.Scene;
 using Services.SpawnPointProviders;
 using Services.StaticData;
+using UI.Composition;
 using UI.Factory;
 using UI.Services.Windows;
+using UI;
 using UnityEngine;
 using Zenject;
 
@@ -53,16 +56,20 @@ namespace Infrastructure.Installers
         {
             BindInputService();
             Container.Bind<IStaticDataService>().To<StaticDataService>().AsSingle();
-            Container.Bind<IAssetProvider>().To<AssetProvider>().AsSingle();
             Container.Bind<IPlayerInputHandlerProvider>().To<PlayerInputHandlerProvider>().AsSingle();
             Container.Bind<ICubeSpawnPointProvider>().To<CubeSpawnPointProvider>().AsSingle();
             Container.Bind<IMergeService>().To<MergeService>().AsSingle();
+            Container.Bind<IMergeVfxService>().To<MergeVfxService>().AsSingle();
             Container.Bind<IRandomService>().To<RandomService>().AsSingle();
             Container.Bind<ICubeSpawnerProvider>().To<CubeSpawnerProvider>().AsSingle();
             Container.Bind<IGameOverService>().To<GameOverService>().AsSingle();
+            Container.Bind<IGameRestartService>().To<GameRestartService>().AsSingle();
             Container.Bind<IWorldData>().To<WorldData>().AsSingle();
+            Container.Bind<ISceneProvider>().To<SceneProvider>().AsSingle();
             Container.Bind<IWindowService>().To<WindowService>().AsSingle();
             Container.Bind<ICubePool>().To<CubePool>().AsSingle();
+            Container.Bind<IUIPresenterFactory>().To<UIPresenterFactory>().AsSingle();
+            Container.BindInterfacesAndSelfTo<CubeValuePresenterLifecycleService>().AsSingle();
         }
         
         private void BindInputService()

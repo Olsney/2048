@@ -6,6 +6,7 @@ namespace Data
     {
         int Score { get; }
         void AddScore(int score);
+        void Reset();
         event Action Changed;
     }
 }
