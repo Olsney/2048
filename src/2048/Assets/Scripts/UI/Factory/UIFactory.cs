@@ -1,4 +1,5 @@
 using Services.StaticData;
+using UI.Services.Windows;
 using UnityEngine;
 using Zenject;
 
@@ -34,7 +35,7 @@ namespace UI.Factory
 
         public GameObject CreateVictoryWindow()
         {
-            GameObject prefab = _staticData.GetPrefab(PrefabId.VictoryWindow);
+            GameObject prefab = _staticData.GetWindowPrefab(WindowType.VictoryWindow);
             
             return _instantiator.InstantiatePrefab(prefab,_uiRoot.transform);
             
@@ -42,7 +43,7 @@ namespace UI.Factory
 
         public GameObject CreateLoseWindow()
         {
-            GameObject prefab = _staticData.GetPrefab(PrefabId.LoseWindow);
+            GameObject prefab = _staticData.GetWindowPrefab(WindowType.LoseWindow);
             
             return _instantiator.InstantiatePrefab(prefab, _uiRoot.transform);        
         }

@@ -212,7 +212,9 @@
 ## 7. Asset & Scene Contracts
 
 ### 7.1 Контракт ресурсов (StaticData)
-Источник: `Assets/Resources/StaticData/PrefabsStaticData.asset`.
+Источники:
+- `Assets/Resources/StaticData/Common/PrefabsStaticData.asset`
+- `Assets/Resources/StaticData/Window/WindowStaticData.asset`
 
 | `PrefabId` | Фактический asset |
 |---|---|
@@ -221,12 +223,15 @@
 | `PlayerInputHandler` | `Assets/Resources/Player/PlayerInputHandler.prefab` |
 | `UIRoot` | `Assets/Resources/UI/UIRoot.prefab` |
 | `Hud` | `Assets/Resources/UI/Hud.prefab` |
+
+| `WindowType` | Фактический asset |
+|---|---|
 | `VictoryWindow` | `Assets/Resources/UI/VictoryWindow.prefab` |
 | `LoseWindow` | `Assets/Resources/UI/LoseWindow.prefab` |
 
 Дополнительные runtime-конфиги:
-- `Assets/Resources/StaticData/CubeGameplayStaticData.asset`
-- `Assets/Resources/StaticData/ScoreViewStaticData.asset`
+- `Assets/Resources/StaticData/Gameplay/CubeGameplayStaticData.asset`
+- `Assets/Resources/StaticData/UI/ScoreViewStaticData.asset`
 
 ### 7.2 Контракт сцен
 Сцены в build settings (`ProjectSettings/EditorBuildSettings.asset`):
@@ -244,7 +249,7 @@
 1. Обновить константы/строки в коде.
 2. Обновить build settings.
 3. Проверить загрузку сцен через `SceneLoader`.
-4. Проверить резолв prefab через `IStaticDataService.GetPrefab`.
+4. Проверить резолв prefab через `IStaticDataService.GetPrefab`/`GetWindowPrefab`.
 5. Прогнать runtime smoke-test.
 
 ---
@@ -274,7 +279,7 @@
 
 ### 9.2 Добавление нового окна UI
 1. Создать prefab окна в `Assets/Resources/UI`.
-2. Добавить запись в `Assets/Resources/StaticData/PrefabsStaticData.asset`.
+2. Добавить запись в `Assets/Resources/StaticData/Window/WindowStaticData.asset`.
 3. Добавить метод фабрики в `IUIFactory`/`UIFactory`.
 4. Расширить `WindowType`.
 5. Обновить `WindowService.Open(...)`.
@@ -288,7 +293,9 @@
 
 ### 9.4 Добавление нового ресурса в `Resources`
 1. Разместить prefab/asset в `Assets/Resources/...`.
-2. Добавить/обновить запись в `Assets/Resources/StaticData/PrefabsStaticData.asset` или соответствующем static-data asset.
+2. Добавить/обновить запись:
+   - в `Assets/Resources/StaticData/Common/PrefabsStaticData.asset` для gameplay/ui-root prefab;
+   - в `Assets/Resources/StaticData/Window/WindowStaticData.asset` для окон.
 3. Проверить отсутствие `null` при загрузке через `IStaticDataService`.
 
 ---
@@ -296,7 +303,9 @@
 ## 10. Known Risks / Tech Debt
 
 ### 10.1 Неполное покрытие новых данных в static data
-- Файл: `Assets/Resources/StaticData/PrefabsStaticData.asset`.
+- Файлы:
+  - `Assets/Resources/StaticData/Common/PrefabsStaticData.asset`
+  - `Assets/Resources/StaticData/Window/WindowStaticData.asset`
 - Риск: новый prefab добавлен в `Assets/Resources`, но не добавлен в static-data конфиг.
 - Влияние: `IStaticDataService` выбросит исключение при резолве.
 - Рекомендация: валидировать конфиг при каждом изменении ресурсных prefab.
@@ -315,8 +324,8 @@
 
 ### 10.4 Рассинхронизация значений gameplay/UI и static data
 - Файлы:
-  - `Assets/Resources/StaticData/CubeGameplayStaticData.asset`
-  - `Assets/Resources/StaticData/ScoreViewStaticData.asset`
+  - `Assets/Resources/StaticData/Gameplay/CubeGameplayStaticData.asset`
+  - `Assets/Resources/StaticData/UI/ScoreViewStaticData.asset`
 - Риск: параметры в конфиге отличаются от ожидаемых продуктовых значений.
 - Влияние: непредсказуемое изменение баланса и ощущения от игры.
 - Рекомендация: фиксировать baseline-значения и проверять их при ревью.
@@ -341,7 +350,7 @@
 2. При уничтожении/релизе объектов подписки снимаются.
 
 ### 11.4 Контракты загрузки
-1. Все записи в `PrefabsStaticData.asset` резолвятся в реальные prefab.
+1. Все записи в `Common/PrefabsStaticData.asset` и `Window/WindowStaticData.asset` резолвятся в реальные prefab.
 2. `SceneLoader` проходит ожидаемый boot chain без застреваний.
 
 ---
@@ -544,5 +553,6 @@ flowchart TD
 - `Assets/Code/Services/GameOver/GameOverService.cs`
 - `Assets/Code/Data/WorldData.cs`
 - `Assets/Code/UI/Services/Windows/WindowService.cs`
-- `Assets/Resources/StaticData/PrefabsStaticData.asset`
+- `Assets/Resources/StaticData/Common/PrefabsStaticData.asset`
+- `Assets/Resources/StaticData/Window/WindowStaticData.asset`
 - `ProjectSettings/EditorBuildSettings.asset`

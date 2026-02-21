@@ -1,4 +1,5 @@
 using Services.StaticData.Configs;
+using UI.Services.Windows;
 using UnityEngine;
 
 namespace Services.StaticData
@@ -10,5 +11,6 @@ namespace Services.StaticData
 
         void LoadAll();
         GameObject GetPrefab(PrefabId id);
+        GameObject GetWindowPrefab(WindowType windowType);
     }
 }

@@ -55,7 +55,9 @@
   2. зарегистрировать в `BootstrapInstaller.BindStates()`;
   3. убедиться, что переходы в `GameStateMachine` реально достижимы.
 - Для новых prefab/окон обязательно:
-  1. добавить/обновить запись в `Assets/Resources/StaticData/PrefabsStaticData.asset`;
+  1. добавить/обновить запись:
+     - для world/gameplay/ui-root prefab: `Assets/Resources/StaticData/Common/PrefabsStaticData.asset`;
+     - для окон: `Assets/Resources/StaticData/Window/WindowStaticData.asset`;
   2. проверить фактический prefab в `Assets/Resources/**`;
   3. убедиться, что `StaticDataService` резолвит prefab без `null`.
 - Не переименовывать сцены `Initial`, `Empty`, `Main` без синхронного обновления:
@@ -76,7 +78,7 @@
 - Merge работает: создаётся новый куб, счёт увеличивается.
 - Окна победы/поражения открываются корректно.
 - Нет утечек подписок на события после уничтожения объектов.
-- Конфиг `Assets/Resources/StaticData/PrefabsStaticData.asset` соответствует реальным prefab в `Assets/Resources`.
+- Конфиги `Assets/Resources/StaticData/Common/PrefabsStaticData.asset` и `Assets/Resources/StaticData/Window/WindowStaticData.asset` соответствуют реальным prefab в `Assets/Resources`.
 
 ## Чего избегать
 - Вносить косметические массовые рефакторы без продуктовой необходимости.

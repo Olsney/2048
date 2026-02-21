@@ -1,17 +1,20 @@
 using System;
 using System.Collections.Generic;
 using Services.StaticData.Configs;
+using UI.Services.Windows;
 using UnityEngine;
 
 namespace Services.StaticData
 {
     public class StaticDataService : IStaticDataService
     {
-        private const string PrefabsStaticDataPath = "StaticData/PrefabsStaticData";
-        private const string CubeGameplayStaticDataPath = "StaticData/CubeGameplayStaticData";
-        private const string ScoreViewStaticDataPath = "StaticData/ScoreViewStaticData";
+        private const string PrefabsStaticDataPath = "StaticData/Common/PrefabsStaticData";
+        private const string CubeGameplayStaticDataPath = "StaticData/Gameplay/CubeGameplayStaticData";
+        private const string ScoreViewStaticDataPath = "StaticData/UI/ScoreViewStaticData";
+        private const string WindowStaticDataPath = "StaticData/Window/WindowStaticData";
 
         private readonly Dictionary<PrefabId, GameObject> _prefabs = new();
+        private readonly Dictionary<WindowType, GameObject> _windowPrefabs = new();
         private bool _isLoaded;
 
         public CubeGameplayStaticData CubeConfig { get; private set; }
@@ -23,6 +26,7 @@ namespace Services.StaticData
                 return;
 
             LoadPrefabs();
+            LoadWindows();
             CubeConfig = LoadConfig<CubeGameplayStaticData>(CubeGameplayStaticDataPath);
             ScoreViewConfig = LoadConfig<ScoreViewStaticData>(ScoreViewStaticDataPath);
             _isLoaded = true;
@@ -38,6 +42,16 @@ namespace Services.StaticData
             throw new KeyNotFoundException($"Prefab with id {id} is not configured.");
         }
 
+        public GameObject GetWindowPrefab(WindowType windowType)
+        {
+            EnsureLoaded();
+
+            if (_windowPrefabs.TryGetValue(windowType, out GameObject prefab))
+                return prefab;
+
+            throw new KeyNotFoundException($"Window prefab with type {windowType} is not configured.");
+        }
+
         private void LoadPrefabs()
         {
             PrefabStaticData config = LoadConfig<PrefabStaticData>(PrefabsStaticDataPath);
@@ -49,6 +63,23 @@ namespace Services.StaticData
 
                 if (_prefabs.TryAdd(entry.Id, entry.Prefab) == false)
                     throw new InvalidOperationException($"Duplicate prefab id found: {entry.Id}.");
+            }
+        }
+
+        private void LoadWindows()
+        {
+            WindowStaticData config = LoadConfig<WindowStaticData>(WindowStaticDataPath);
+
+            foreach (WindowConfigEntry entry in config.Entries)
+            {
+                if (entry.WindowType == WindowType.Unknown)
+                    throw new InvalidOperationException("Window type cannot be Unknown.");
+
+                if (entry.Prefab == null)
+                    throw new InvalidOperationException($"Window prefab for type {entry.WindowType} is null.");
+
+                if (_windowPrefabs.TryAdd(entry.WindowType, entry.Prefab) == false)
+                    throw new InvalidOperationException($"Duplicate window type found: {entry.WindowType}.");
             }
         }
 
