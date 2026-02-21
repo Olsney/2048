@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace Services.Scene
 {
-  public interface ISceneProvider
-  {
-    void SetTransform(Transform container);
-    Transform Container { get; }
-  }
+    public interface ISceneProvider
+    {
+        Transform Container { get; }
+        void SetTransform(Transform container);
+    }
 }
