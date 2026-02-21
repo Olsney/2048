@@ -4,6 +4,7 @@ using Services.StaticData;
 using Services.StaticData.Configs;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 namespace UI.Elements
@@ -11,7 +12,9 @@ namespace UI.Elements
     public class ScoreView : MonoBehaviour, IScoreHudView
     {
         [SerializeField] private TextMeshProUGUI _counter;
+        [SerializeField] private Button _restartButton;
 
+        public event Action RestartRequested;
         public event Action Destroyed;
 
         private bool _isConfigured;
@@ -63,11 +66,26 @@ namespace UI.Elements
                     .SetEase(Ease.InBack));
         }
 
+        private void OnEnable()
+        {
+            if (_restartButton != null)
+                _restartButton.onClick.AddListener(OnRestartClicked);
+        }
+
+        private void OnDisable()
+        {
+            if (_restartButton != null)
+                _restartButton.onClick.RemoveListener(OnRestartClicked);
+        }
+
         private void OnDestroy()
         {
             _countTween?.Kill();
             _scaleTween?.Kill();
             Destroyed?.Invoke();
         }
+
+        private void OnRestartClicked() =>
+            RestartRequested?.Invoke();
     }
 }

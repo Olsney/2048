@@ -18,7 +18,7 @@ namespace UI
         }
 
         public ScoreHudPresenter CreateScoreHudPresenter(IScoreHudView view) =>
-            new(view, _worldData);
+            new(view, _worldData, _gameRestartService);
 
         public VictoryWindowPresenter CreateVictoryWindowPresenter(IVictoryWindowView view) =>
             new(view, _worldData, _gameRestartService);
