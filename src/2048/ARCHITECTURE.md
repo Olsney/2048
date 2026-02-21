@@ -76,10 +76,11 @@
 2. `CubeSpawner` подписан на `TapEnded` и запускает spawn нового куба.
 3. `GameFactory` создаёт/получает куб через `CubePool`.
 4. `CubeMover` управляет drag + launch.
-5. При столкновении равных кубов `Cube` вызывает `IMergeService.Merge(...)`.
+5. При столкновении равных кубов `Cube` вызывает `IMergeService.Merge(...)`, передавая `contact point` (с fallback на midpoint).
 6. `MergeService`:
 - рассчитывает новый value;
 - увеличивает score через `IWorldData.AddScore(...)`;
+- запускает VFX merge через `IMergeVfxService` в точке контакта;
 - создаёт merged cube через `CubeSpawnerProvider.Instance.SpawnMerge(...)`;
 - возвращает старые кубы в pool.
 7. UI (`ScoreHudPresenter`/`ScoreView`) обновляется по событию `WorldData.Changed`.
@@ -111,6 +112,7 @@
 ### Services (`Assets/Scripts/Services`)
 Отвечают за доменные операции и инфраструктурные runtime-сервисы:
 - merge (`MergeService`);
+- merge VFX (`MergeVfxService`);
 - game over (`GameOverService`);
 - input abstraction (`StandaloneInputService`, `MobileInputService`);
 - runtime providers (`CubeSpawnerProvider`, `CubeSpawnPointProvider`, `PlayerInputHandlerProvider`);
@@ -156,6 +158,7 @@
 | `IPlayerInputHandlerProvider` | `PlayerInputHandlerProvider` | `AsSingle` | Хранит ссылку на `PlayerInputHandler`. |
 | `ICubeSpawnPointProvider` | `CubeSpawnPointProvider` | `AsSingle` | Хранит текущий `CubeSpawnPoint`. |
 | `IMergeService` | `MergeService` | `AsSingle` | Логика merge и score reward. |
+| `IMergeVfxService` | `MergeVfxService` | `AsSingle` | Спавн и автоочистка VFX при merge. |
 | `IRandomService` | `RandomService` | `AsSingle` | RNG для spawn/force. |
 | `ICubeSpawnerProvider` | `CubeSpawnerProvider` | `AsSingle` | Хранит `CubeSpawner`. |
 | `IGameOverService` | `GameOverService` | `AsSingle` | Lose/victory decision и завершение игры. |
@@ -223,6 +226,7 @@
 | `PlayerInputHandler` | `Assets/Resources/Player/PlayerInputHandler.prefab` |
 | `UIRoot` | `Assets/Resources/UI/UIRoot.prefab` |
 | `Hud` | `Assets/Resources/UI/Hud.prefab` |
+| `MergeVfx` | `Assets/Prefabs/VFX/CFXR Firework 1 (Cold).prefab` |
 
 | `WindowType` | Фактический asset |
 |---|---|
@@ -467,16 +471,18 @@ sequenceDiagram
     participant C2 as Cube B
     participant MS as MergeService
     participant WD as WorldData
+    participant MVS as MergeVfxService
     participant CSP as CubeSpawnerProvider
     participant CS as CubeSpawner
     participant CP as CubePool
     participant UI as ScoreHudPresenter/ScoreView
 
-    C1->>MS: Merge(C1, C2)
+    C1->>MS: Merge(C1, C2, contactPoint)
     MS->>WD: AddScore(reward)
     WD-->>UI: Changed event
     UI-->>UI: SetScore(Score)
 
+    MS->>MVS: PlayAt(contactPoint)
     MS->>CSP: Instance
     CSP-->>MS: CubeSpawner
     MS->>CS: SpawnMerge(newValue, midpoint)
@@ -528,6 +534,7 @@ flowchart TD
     BI --> SV2["IPlayerInputHandlerProvider -> PlayerInputHandlerProvider"]
     BI --> SV3["ICubeSpawnPointProvider -> CubeSpawnPointProvider"]
     BI --> SV4["IMergeService -> MergeService"]
+    BI --> SV4A["IMergeVfxService -> MergeVfxService"]
     BI --> SV5["IRandomService -> RandomService"]
     BI --> SV6["ICubeSpawnerProvider -> CubeSpawnerProvider"]
     BI --> SV7["IGameOverService -> GameOverService"]
@@ -550,6 +557,7 @@ flowchart TD
 - `Assets/Scripts/Gameplay/Cubes/Spawner/CubeSpawner.cs`
 - `Assets/Scripts/Gameplay/Cubes/Cube.cs`
 - `Assets/Scripts/Services/Merge/MergeService.cs`
+- `Assets/Scripts/Services/Merge/MergeVfxService.cs`
 - `Assets/Scripts/Services/GameOver/GameOverService.cs`
 - `Assets/Scripts/Data/WorldData.cs`
 - `Assets/Scripts/UI/Services/Windows/WindowService.cs`

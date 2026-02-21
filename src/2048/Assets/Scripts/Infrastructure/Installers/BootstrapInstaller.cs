@@ -59,6 +59,7 @@ namespace Infrastructure.Installers
             Container.Bind<IPlayerInputHandlerProvider>().To<PlayerInputHandlerProvider>().AsSingle();
             Container.Bind<ICubeSpawnPointProvider>().To<CubeSpawnPointProvider>().AsSingle();
             Container.Bind<IMergeService>().To<MergeService>().AsSingle();
+            Container.Bind<IMergeVfxService>().To<MergeVfxService>().AsSingle();
             Container.Bind<IRandomService>().To<RandomService>().AsSingle();
             Container.Bind<ICubeSpawnerProvider>().To<CubeSpawnerProvider>().AsSingle();
             Container.Bind<IGameOverService>().To<GameOverService>().AsSingle();
