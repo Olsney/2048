@@ -11,5 +11,6 @@ namespace Services.CubePools
 
         GameObject Get(Vector3 position, Quaternion rotation);
         void Release(GameObject cubeObject);
+        void Clear();
     }
 }

@@ -16,4 +16,10 @@ public class SceneContainer : MonoBehaviour
     {
         _sceneProvider.SetTransform(transform);
     }
+
+    private void OnDestroy()
+    {
+        if (_sceneProvider.Container == transform)
+            _sceneProvider.SetTransform(null);
+    }
 }
