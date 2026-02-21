@@ -43,7 +43,9 @@ namespace UI.Factory
             if (view == null)
                 throw new InvalidOperationException($"{nameof(IScoreHudView)} is missing on HUD prefab.");
 
-            _scoreHudView?.Destroyed -= OnScoreHudDestroyed;
+            if (_scoreHudView != null)
+                _scoreHudView.Destroyed -= OnScoreHudDestroyed;
+            
             _scoreHudPresenter?.Dispose();
 
             _scoreHudView = view;
