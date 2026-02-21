@@ -1,4 +1,5 @@
 using System;
+using Services.Scene;
 using Services.StaticData;
 using UI.Elements;
 using UI.Services.Windows;
@@ -13,30 +14,39 @@ namespace UI.Factory
         private readonly IInstantiator _instantiator;
         private readonly IStaticDataService _staticData;
         private readonly IUIPresenterFactory _presenterFactory;
+        private readonly ISceneProvider _sceneProvider;
         
         private GameObject _uiRoot;
         private ScoreHudPresenter _scoreHudPresenter;
         private IScoreHudView _scoreHudView;
 
-        public UIFactory(IInstantiator instantiator, IStaticDataService staticData, IUIPresenterFactory presenterFactory)
+        public UIFactory(
+            IInstantiator instantiator,
+            IStaticDataService staticData,
+            IUIPresenterFactory presenterFactory,
+            ISceneProvider sceneProvider)
         {
             _instantiator = instantiator;
             _staticData = staticData;
             _presenterFactory = presenterFactory;
+            _sceneProvider = sceneProvider;
         }
         
         public GameObject CreateUIRoot()
         {
             GameObject prefab = _staticData.GetPrefab(PrefabId.UIRoot);
-            _uiRoot = _instantiator.InstantiatePrefab(prefab);
+            _uiRoot = _instantiator.InstantiatePrefab(prefab, SceneRoot());
             
             return _uiRoot;
         }
 
         public GameObject CreateHud()
         {
+            if (_uiRoot == null)
+                throw new InvalidOperationException($"{nameof(CreateUIRoot)} must be called before {nameof(CreateHud)}.");
+
             GameObject prefab = _staticData.GetPrefab(PrefabId.Hud);
-            GameObject instance = _instantiator.InstantiatePrefab(prefab);
+            GameObject instance = _instantiator.InstantiatePrefab(prefab, _uiRoot.transform);
 
             IScoreHudView view = ResolveView<IScoreHudView>(instance);
 
@@ -122,6 +132,16 @@ namespace UI.Factory
             _scoreHudPresenter?.Dispose();
             _scoreHudPresenter = null;
             _scoreHudView = null;
+        }
+
+        private Transform SceneRoot()
+        {
+            Transform root = _sceneProvider.Container;
+
+            if (root == null)
+                throw new InvalidOperationException($"{nameof(SceneContainer)} is not initialized in active scene.");
+
+            return root;
         }
     }
 }
