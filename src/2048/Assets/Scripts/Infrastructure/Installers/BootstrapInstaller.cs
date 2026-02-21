@@ -10,6 +10,7 @@ using Services.InputHandlerProviders;
 using Services.Inputs;
 using Services.Merge;
 using Services.Randoms;
+using Services.Scene;
 using Services.SpawnPointProviders;
 using Services.StaticData;
 using UI.Composition;
@@ -63,6 +64,7 @@ namespace Infrastructure.Installers
             Container.Bind<IGameOverService>().To<GameOverService>().AsSingle();
             Container.Bind<IGameRestartService>().To<GameRestartService>().AsSingle();
             Container.Bind<IWorldData>().To<WorldData>().AsSingle();
+            Container.Bind<ISceneProvider>().To<SceneProvider>().AsSingle();
             Container.Bind<IWindowService>().To<WindowService>().AsSingle();
             Container.Bind<ICubePool>().To<CubePool>().AsSingle();
             Container.Bind<IUIPresenterFactory>().To<UIPresenterFactory>().AsSingle();
