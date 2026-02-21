@@ -5,6 +5,7 @@ using Infrastructure.States;
 using Services.CubePools;
 using Services.CubeSpawnerProviders;
 using Services.GameOver;
+using Services.GameRestart;
 using Services.InputHandlerProviders;
 using Services.Inputs;
 using Services.Merge;
@@ -60,6 +61,7 @@ namespace Infrastructure.Installers
             Container.Bind<IRandomService>().To<RandomService>().AsSingle();
             Container.Bind<ICubeSpawnerProvider>().To<CubeSpawnerProvider>().AsSingle();
             Container.Bind<IGameOverService>().To<GameOverService>().AsSingle();
+            Container.Bind<IGameRestartService>().To<GameRestartService>().AsSingle();
             Container.Bind<IWorldData>().To<WorldData>().AsSingle();
             Container.Bind<IWindowService>().To<WindowService>().AsSingle();
             Container.Bind<ICubePool>().To<CubePool>().AsSingle();
