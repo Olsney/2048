@@ -8,9 +8,11 @@ using Zenject;
 
 namespace UI.Elements
 {
-    public class ScoreView : MonoBehaviour
+    public class ScoreView : MonoBehaviour, IScoreHudView
     {
         [SerializeField] private TextMeshProUGUI _counter;
+
+        public event Action Destroyed;
 
         private bool _isConfigured;
         private float _punchScale;
@@ -36,7 +38,7 @@ namespace UI.Elements
             _isConfigured = true;
         }
 
-        public void SetValue(int newValue)
+        public void SetScore(int newValue)
         {
             if (_isConfigured == false)
                 throw new InvalidOperationException($"{nameof(ScoreViewStaticData)} is not configured.");
@@ -59,6 +61,13 @@ namespace UI.Elements
                 .SetEase(Ease.OutBack)
                 .OnComplete(() => _counter.transform.DOScale(endValue: 1f, duration: _scaleDuration / 2)
                     .SetEase(Ease.InBack));
+        }
+
+        private void OnDestroy()
+        {
+            _countTween?.Kill();
+            _scaleTween?.Kill();
+            Destroyed?.Invoke();
         }
     }
 }

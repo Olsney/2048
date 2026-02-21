@@ -11,8 +11,10 @@ using Services.Merge;
 using Services.Randoms;
 using Services.SpawnPointProviders;
 using Services.StaticData;
+using UI.Composition;
 using UI.Factory;
 using UI.Services.Windows;
+using UI;
 using UnityEngine;
 using Zenject;
 
@@ -61,6 +63,8 @@ namespace Infrastructure.Installers
             Container.Bind<IWorldData>().To<WorldData>().AsSingle();
             Container.Bind<IWindowService>().To<WindowService>().AsSingle();
             Container.Bind<ICubePool>().To<CubePool>().AsSingle();
+            Container.Bind<IUIPresenterFactory>().To<UIPresenterFactory>().AsSingle();
+            Container.BindInterfacesAndSelfTo<CubeValuePresenterLifecycleService>().AsSingle();
         }
         
         private void BindInputService()

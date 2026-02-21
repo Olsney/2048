@@ -68,6 +68,7 @@
 - Предпочитать DI через Zenject и интерфейсы (`I*Service`, `I*Factory`, `I*Provider`).
 - Не создавать глобальные статики для игрового состояния; использовать `IWorldData` и сервисы.
 - Логику объединения/скора держать в сервисах (`MergeService`, `WorldData`), а не в UI.
+- UI вести через MVP Passive View: `View` не читает `IWorldData` напрямую, подписки и orchestration держать в `Presenter`.
 - UI-окна создавать через `IWindowService` + `IUIFactory`, не напрямую из геймплея.
 - Пул объектов (`CubePool`) обязателен для кубов; не возвращаться к `Instantiate` в hot path.
 
