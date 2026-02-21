@@ -22,7 +22,7 @@ namespace Services.GameRestart
 
         public void Restart()
         {
-            Time.timeScale = 1f;
+            Time.timeScale = 0f;
             _cubePool.Clear();
             _worldData.Reset();
             _stateMachine.Enter<LoadLevelState, string>(MainSceneName);

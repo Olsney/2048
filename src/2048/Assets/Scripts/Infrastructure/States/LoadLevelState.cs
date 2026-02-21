@@ -1,5 +1,6 @@
 using Infrastructure.Factory.Game;
 using UI.Factory;
+using UnityEngine;
 
 namespace Infrastructure.States
 {
@@ -36,6 +37,7 @@ namespace Infrastructure.States
 
         private void OnLoaded()
         {
+            Time.timeScale = 1f;
             InitUIRoot();
 
             InitGameWorld();
