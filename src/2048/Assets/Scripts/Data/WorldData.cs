@@ -14,5 +14,14 @@ namespace Data
             
             Changed?.Invoke();
         }
+
+        public void Reset()
+        {
+            if (Score == 0)
+                return;
+
+            Score = 0;
+            Changed?.Invoke();
+        }
     }
 }
