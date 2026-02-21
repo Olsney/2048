@@ -6,6 +6,7 @@ namespace Services.StaticData
         CubeSpawner = 1,
         PlayerInputHandler = 2,
         UIRoot = 3,
-        Hud = 4
+        Hud = 4,
+        MergeVfx = 5
     }
 }

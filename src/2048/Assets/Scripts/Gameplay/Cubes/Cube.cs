@@ -94,8 +94,9 @@ namespace Gameplay.Cubes
                 return;
             
             IsMerging = true;
-            
-            _mergeService.Merge(this, cube);
+
+            Vector3 mergeEffectPosition = GetMergeEffectPosition(collision, cube);
+            _mergeService.Merge(this, cube, mergeEffectPosition);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -123,6 +124,14 @@ namespace Gameplay.Cubes
 
         public void MarkAsEnteredPlayArea() =>
             HasEnteredPlayArea = true;
+
+        private Vector3 GetMergeEffectPosition(Collision collision, Cube otherCube)
+        {
+            if (collision.contactCount > 0)
+                return collision.GetContact(0).point;
+
+            return (transform.position + otherCube.transform.position) / 2f;
+        }
 
         private void OnDestroy() =>
             Destroyed?.Invoke();
